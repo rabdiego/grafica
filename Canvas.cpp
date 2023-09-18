@@ -1,4 +1,5 @@
 #include "Canvas.h"
+#include <vector>
 
 Canvas::Canvas(int windowDistance, int windowWidth, int windowHeight, int numLines, int numColumns) {
 	this->windowDistance = windowDistance;
@@ -14,13 +15,14 @@ Canvas::Canvas(int windowDistance, int windowWidth, int windowHeight, int numLin
 	this->jYMax = windowHeight / 2;
 }
 
-Tensor Canvas::raycast(Eigen::Vector3d observable, Sphere sphere, PontualSource source) {
+Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene, PontualSource source) {
 	/*
 	Método para desenhar os objetos do cenário na tela
 	*/
 	Tensor canvas(this->numColumns, this->numLines);
-	int yL, xC;
-	Eigen::Vector3d pJ, intercepted;
+	int yL, xC, numObjects = scene.getNumElements();
+	Eigen::Vector3d pJ;
+	std::vector<Eigen::Array4d> intensityAndDistanceToObjects(numObjects);
 
 	for (int l = 0; l < this->numLines; l++) {
 		yL = this->jYMax - l * this->deltaY - this->deltaY / 2;
@@ -32,11 +34,23 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Sphere sphere, PontualSource 
 
 			Ray ray(observable, pJ);
 
-			intercepted = sphere.hasInterceptedRay(ray, source);
+			for (int i = 0; i < numObjects; i++) {
+				intensityAndDistanceToObjects[i] = (*scene.objects[i]).hasInterceptedRay(ray, source);
+			}
 
-			canvas.red(l, c) = intercepted[0];
-			canvas.green(l, c) = intercepted[1];
-			canvas.blue(l, c) = intercepted[2];
+			double minimum = -INFINITY;
+			int idx = 0;
+
+			for (int i = 0; i < numObjects; i++) {
+				if (intensityAndDistanceToObjects[i][3] < 0 && intensityAndDistanceToObjects[i][3] > minimum) {
+					minimum = intensityAndDistanceToObjects[i][3];
+					idx = i;
+				}
+			}
+
+			canvas.red(l, c) = intensityAndDistanceToObjects[idx][0];
+			canvas.green(l, c) = intensityAndDistanceToObjects[idx][1];
+			canvas.blue(l, c) = intensityAndDistanceToObjects[idx][2];
 		}
 	}
 
