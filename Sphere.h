@@ -1,25 +1,24 @@
 #include <Eigen>
+#include <vector>
 
 #include "Ray.h"
-#include "PontualSource.h"
+#include "LightSource.h"
 #include "Object.h"
 
 #ifndef Sphere_H
 #define Sphere_H
 
-class Sphere : public Object {
+class Sphere : public Object
+{
 	/*
 	Classe para representar uma esfera
 	*/
 public:
 	double radius;
 	Eigen::Vector3d center;
-	Eigen::Vector3d kDif;
-	Eigen::Vector3d kEsp;
-	double specularIndex = 15;
 
-	Sphere(double radius, Eigen::Vector3d center, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex);
-	Eigen::Vector4d hasInterceptedRay(Ray ray, PontualSource source);
+	Sphere(double radius, Eigen::Vector3d center, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex);
+	Eigen::Vector4d hasInterceptedRay(Ray ray, std::vector<LightSource*> sources);
 };
 
 #endif

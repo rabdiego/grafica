@@ -3,7 +3,8 @@
 #ifndef Tensor_H
 #define Tensor_H
 
-class Tensor {
+class Tensor
+{
 	/*
 	Classe para representar a matriz de cores
 	São 3 matrizes de tamanho (numCol, numLin),

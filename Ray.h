@@ -3,7 +3,8 @@
 #ifndef Ray_H
 #define Ray_H
 
-class Ray {
+class Ray
+{
 	/*
 	Classe para representar os raios
 	de visão

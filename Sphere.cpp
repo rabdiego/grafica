@@ -1,14 +1,17 @@
 #include "Sphere.h"
 
-Sphere::Sphere(double radius, Eigen::Vector3d center, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex) {
+Sphere::Sphere(double radius, Eigen::Vector3d center, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
+{
 	this->radius = radius;
 	this->center = center;
+	this->kAmbient = kAmbient;
 	this->kDif = kDif;
 	this->kEsp = kEsp;
-	this->specularIndex = 2 * specularIndex + 1;
+	this->specularIndex = specularIndex;
 }
 
-Eigen::Vector4d Sphere::hasInterceptedRay(Ray ray, PontualSource source) {
+Eigen::Vector4d Sphere::hasInterceptedRay(Ray ray, std::vector<LightSource*> sources)
+{
 	/*
 	Método para checar se interceptou um raio
 	*/
@@ -21,26 +24,28 @@ Eigen::Vector4d Sphere::hasInterceptedRay(Ray ray, PontualSource source) {
 
 	double delta = b * b - c;
 
-	if (delta >= 0) {
+	if (delta >= 0)
+	{
 		double tInt = (sqrt(delta) - b);
 
 		pInt = ray.initialPoint + tInt * ray.direction;
 
-		Eigen::Vector3d normal = (pInt - this->center).normalized();
-		Eigen::Vector3d directionToSource = (source.origin - this->center).normalized();
-
+		Eigen::Vector3d intesityAmbient(0, 0, 0);
 		Eigen::Vector3d intesityDifuse(0, 0, 0);
 		Eigen::Vector3d intesitySpecular(0, 0, 0);
+		Eigen::Vector3d singleDifuse;
+		Eigen::Vector3d singleSpecular;
+		Eigen::Vector3d normal = (pInt - this->center).normalized();
 
-		Eigen::Vector3d directionToSourceReflex = (2 * directionToSource.dot(normal) * normal) - directionToSource;
-		Eigen::Vector3d rayDirectionReflex = ray.direction;
+		for (auto& source : sources)
+		{
+			source->computeIntensity(this->center, ray, &intesityAmbient, &intesityDifuse, &intesitySpecular, normal, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
+		}
 
-		intesityDifuse = ((source.intensity).cwiseProduct(this->kDif)) * normal.dot(directionToSource);
-		intesitySpecular = ((source.intensity).cwiseProduct(this->kEsp)) * pow(directionToSourceReflex.dot(rayDirectionReflex), this->specularIndex);
+		intesityEye = intesityDifuse + intesitySpecular + intesityAmbient;
 
-		intesityEye = intesityDifuse + intesitySpecular;
-
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++)
+		{
 			intensityAndDistance[i] = intesityEye[i];
 		}
 		intensityAndDistance[3] = tInt;
