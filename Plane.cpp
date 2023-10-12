@@ -2,7 +2,7 @@
 
 Plane::Plane(Eigen::Vector3d normal, Eigen::Vector3d center, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, double specularIndex)
 {
-	this->normal = normal;
+	this->normal = normal.normalized();
 	this->center = center;
 	this->kAmbient = kAmbient;
 	this->kDif = kDif;

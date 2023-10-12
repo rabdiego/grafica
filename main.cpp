@@ -5,6 +5,7 @@
 // Estrutura de dados
 #include "AmbientSource.h"
 #include "Canvas.h"
+#include "Cilinder.h"
 #include "LightSource.h"
 #include "Object.h"
 #include "Plane.h"
@@ -83,14 +84,14 @@ int main(int argc, char* argv[])
 	Eigen::Vector3d leftEyeKAmbient(0, 0.4, 1);
 	Eigen::Vector3d leftEyeKDif(0, 0.4, 1);
 	Eigen::Vector3d leftEyeKEsp(0.3, 0.3, 0.3);
-	Object* leftEye = new Sphere(leftEyeRadius, leftEyeCenter, leftEyeKAmbient, leftEyeKDif, leftEyeKEsp, 1);
+	Object* leftEye = new Sphere(leftEyeRadius, leftEyeCenter, leftEyeKAmbient, leftEyeKDif, leftEyeKEsp, 4);
 
 	double rightEyeRadius = 20;
 	Eigen::Vector3d rightEyeCenter(35, 55, -1045);
 	Eigen::Vector3d rightEyeKAmbient(0, 0.4, 1);
 	Eigen::Vector3d rightEyeKDif(0, 0.4, 1);
 	Eigen::Vector3d rightEyeKEsp(0.3, 0.3, 0.3);
-	Object* rightEye = new Sphere(rightEyeRadius, rightEyeCenter, rightEyeKAmbient, rightEyeKDif, rightEyeKEsp, 2);
+	Object* rightEye = new Sphere(rightEyeRadius, rightEyeCenter, rightEyeKAmbient, rightEyeKDif, rightEyeKEsp, 4);
 	
 	double upperRightMouthRadius = 10;
 	Eigen::Vector3d upperRightMouthCenter(-32, 15, -1005);
@@ -119,6 +120,22 @@ int main(int argc, char* argv[])
 	Eigen::Vector3d upperLeftMouthKDif(0.4, 0.2, 0);
 	Eigen::Vector3d upperLeftMouthKEsp(0, 0, 0);
 	Object* upperLeftMouth = new Sphere(upperLeftMouthRadius, upperLeftMouthCenter, upperLeftMouthKAmbient, upperLeftMouthKDif, upperLeftMouthKEsp, 0);
+
+	double hatBaseRadius = 100;
+	Eigen::Vector3d hatBaseCenterBase(0, 110, -1100);
+	Eigen::Vector3d hatBaseCenterTop(0, 125, -1100);
+	Eigen::Vector3d hatBaseKAmbient(0.2, 0.2, 0.2);
+	Eigen::Vector3d hatBaseKDif(0.2, 0.2, 0.2);
+	Eigen::Vector3d hatBaseKEsp(0, 0, 0);
+	Object* hatBase = new Cilinder(hatBaseRadius, hatBaseCenterBase, hatBaseCenterTop, hatBaseKAmbient, hatBaseKDif, hatBaseKEsp, 0);
+
+	double hatTopRadius = 80;
+	Eigen::Vector3d hatTopCenterBase(0, 125, -1100);
+	Eigen::Vector3d hatTopCenterTop(0, 185, -1100);
+	Eigen::Vector3d hatTopKAmbient(0.2, 0.2, 0.2);
+	Eigen::Vector3d hatTopKDif(0.2, 0.2, 0.2);
+	Eigen::Vector3d hatTopKEsp(0, 0, 0);
+	Object* hatTop = new Cilinder(hatTopRadius, hatTopCenterBase, hatTopCenterTop, hatTopKAmbient, hatTopKDif, hatTopKEsp, 0);
 	
 	scene.addObject(body);
 	scene.addObject(head);
@@ -128,6 +145,8 @@ int main(int argc, char* argv[])
 	scene.addObject(upperLeftMouth);
 	scene.addObject(rightMouth);
 	scene.addObject(leftMouth);
+	scene.addObject(hatBase);
+	scene.addObject(hatTop);
 
 	Eigen::Vector3d floorNormal(0, 1, 0);
 	Eigen::Vector3d floorCenter(0, -200, 0);
@@ -140,7 +159,7 @@ int main(int argc, char* argv[])
 	Eigen::Vector3d wallNormal(0, 0, 1);
 	Eigen::Vector3d wallCenter(0, 0, -2000);
 	Eigen::Vector3d wallKAmbient(0, 0.5, 0.8);
-	Eigen::Vector3d wallKDif(0.3, 0.3, 0.3);
+	Eigen::Vector3d wallKDif(0, 0.5, 0.8);
 	Eigen::Vector3d wallKEsp(0, 0, 0);
 	int wallSpecularIndex = 0;
 	Object* wall = new Plane(wallNormal, wallCenter, wallKAmbient, wallKDif, wallKEsp, wallSpecularIndex);
@@ -152,13 +171,12 @@ int main(int argc, char* argv[])
 	Eigen::Vector3d pontualOrigin(-500, 500, 0);
 	LightSource* pontual = new PontualSource(pontualOrigin, pontualIntensity);
 
-	Eigen::Vector3d ambientIntensity(0.55, 0.55, 0.55);
+	Eigen::Vector3d ambientIntensity(0.3, 0.3, 0.3);
 	LightSource* ambient = new AmbientSource(ambientIntensity);
 
 	scene.addSource(pontual);
 	scene.addSource(ambient);
 	
-
 	// Display
 	Tensor display = canvas.raycast(origin, scene);
 	display.normalize();

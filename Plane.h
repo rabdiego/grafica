@@ -1,8 +1,3 @@
-#include <Eigen>
-#include <vector>
-
-#include "Ray.h"
-#include "LightSource.h"
 #include "Object.h"
 
 #ifndef Plane_H
@@ -10,9 +5,6 @@
 
 class Plane : public Object
 {
-	/*
-	Classe para representar uma esfera
-	*/
 public:
 	Eigen::Vector3d normal;
 	Eigen::Vector3d center;

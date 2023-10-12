@@ -39,7 +39,7 @@ Eigen::Vector4d Sphere::hasInterceptedRay(Ray ray, std::vector<LightSource*> sou
 
 		for (auto& source : sources)
 		{
-			source->computeIntensity(this->center, ray, &intesityAmbient, &intesityDifuse, &intesitySpecular, normal, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
+			source->computeIntensity(pInt, ray, &intesityAmbient, &intesityDifuse, &intesitySpecular, normal, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 		}
 
 		intesityEye = intesityDifuse + intesitySpecular + intesityAmbient;
