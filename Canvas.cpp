@@ -31,7 +31,8 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene)
 		numObjectsVector += (*scene.hitboxes[i]).getNumElements();
 	}
 
-	std::vector<Eigen::Array4d> intensityAndDistanceToObjects(numObjectsVector);
+	std::vector<double> distanceToObjects(numObjectsVector);
+	std::vector<Object*> objects(numObjectsVector);
 	int idx;
 
 	for (int l = 0; l < this->numLines; l++)
@@ -50,7 +51,8 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene)
 
 			for (int i = 0; i < numObjects; i++)
 			{
-				intensityAndDistanceToObjects[idx] = ((*scene.objects[i]).hasInterceptedRay(ray, scene.sources));
+				distanceToObjects[idx] = ((*scene.objects[i]).hasInterceptedRay(ray));
+				objects[idx] = &(*scene.objects[i]);
 				idx++;
 			}
 
@@ -61,7 +63,8 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene)
 				{
 					for (int j = 0; j < numElements; j++)
 					{
-						intensityAndDistanceToObjects[idx] = ((*scene.hitboxes[i]->objects[j]).hasInterceptedRay(ray, scene.sources));
+						distanceToObjects[idx] = ((*scene.hitboxes[i]->objects[j]).hasInterceptedRay(ray));
+						objects[idx] = &(*scene.hitboxes[i]->objects[j]);
 						idx++;
 					}
 				}
@@ -72,17 +75,18 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene)
 
 			for (int i = 0; i < idx; i++)
 			{
-				if (intensityAndDistanceToObjects[i][3] < 0 && intensityAndDistanceToObjects[i][3] > minimum)
+				if (distanceToObjects[i] < 0 && distanceToObjects[i] > minimum)
 				{
-					minimum = intensityAndDistanceToObjects[i][3];
+					minimum = distanceToObjects[i];
 					idxMin = i;
 				}
 			}
 
+			Eigen::Vector3d color = objects[idxMin]->computeColor(minimum, ray, scene.sources);
 			
-			canvas.red(l, c) = intensityAndDistanceToObjects[idxMin][0];
-			canvas.green(l, c) = intensityAndDistanceToObjects[idxMin][1];
-			canvas.blue(l, c) = intensityAndDistanceToObjects[idxMin][2];
+			canvas.red(l, c) = color(0);
+			canvas.green(l, c) = color(1);
+			canvas.blue(l, c) = color(2);
 		}
 	}
 

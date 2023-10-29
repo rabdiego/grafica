@@ -15,6 +15,7 @@ class Cone : public Object
 	Classe para representar uma esfera
 	*/
 public:
+	int structure;
 	double radius;
 	double height;
 	double angle;
@@ -24,7 +25,8 @@ public:
 	CircularPlane* bottom;
 
 	Cone(double angle, Eigen::Vector3d centerBase, Eigen::Vector3d vertex, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex);
-	Eigen::Vector4d hasInterceptedRay(Ray ray, std::vector<LightSource*> sources);
+	double hasInterceptedRay(Ray ray);
+	Eigen::Vector3d computeColor(double tInt, Ray ray, std::vector<LightSource*> sources);
 };
 
 #endif

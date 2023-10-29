@@ -14,7 +14,9 @@ public:
 	Eigen::Vector3d kDif;
 	Eigen::Vector3d kEsp;
 	int specularIndex;
-	virtual Eigen::Vector4d hasInterceptedRay(Ray ray, std::vector<LightSource*> sources) = 0;
+
+	virtual double hasInterceptedRay(Ray ray) = 0;
+	virtual Eigen::Vector3d computeColor(double tInt, Ray ray, std::vector<LightSource*> sources) = 0;
 };
 
 #endif

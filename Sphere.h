@@ -18,7 +18,8 @@ public:
 	Eigen::Vector3d center;
 
 	Sphere(double radius, Eigen::Vector3d center, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex);
-	Eigen::Vector4d hasInterceptedRay(Ray ray, std::vector<LightSource*> sources);
+	double hasInterceptedRay(Ray ray);
+	Eigen::Vector3d computeColor(double tInt, Ray ray, std::vector<LightSource*> sources);
 };
 
 #endif

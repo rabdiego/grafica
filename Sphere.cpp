@@ -10,46 +10,41 @@ Sphere::Sphere(double radius, Eigen::Vector3d center, Eigen::Vector3d kAmbient, 
 	this->specularIndex = specularIndex;
 }
 
-Eigen::Vector4d Sphere::hasInterceptedRay(Ray ray, std::vector<LightSource*> sources)
+double Sphere::hasInterceptedRay(Ray ray)
 {
-	/*
-	Método para checar se interceptou um raio
-	*/
 	Eigen::Vector3d w = ray.initialPoint - this->center;
-	Eigen::Vector3d pInt(0, 0, 0);
+
 	double b = w.dot(ray.direction);
 	double c = w.dot(w) - this->radius * this->radius;
-	Eigen::Vector3d intesityEye(0, 0, 0);
-	Eigen::Vector4d intensityAndDistance(0, 0, 0, 1);
 
 	double delta = b * b - c;
 
 	if (delta >= 0)
+		return (sqrt(delta) - b);
+
+	return 1;
+}
+
+Eigen::Vector3d Sphere::computeColor(double tInt, Ray ray, std::vector<LightSource*> sources)
+{
+	Eigen::Vector3d pInt(0, 0, 0);
+	Eigen::Vector3d intesityEye(0, 0, 0);
+
+	pInt = ray.initialPoint + tInt * ray.direction;
+
+	Eigen::Vector3d intesityAmbient(0, 0, 0);
+	Eigen::Vector3d intesityDifuse(0, 0, 0);
+	Eigen::Vector3d intesitySpecular(0, 0, 0);
+	Eigen::Vector3d singleDifuse;
+	Eigen::Vector3d singleSpecular;
+	Eigen::Vector3d normal = (pInt - this->center).normalized();
+
+	for (auto& source : sources)
 	{
-		double tInt = (sqrt(delta) - b);
-
-		pInt = ray.initialPoint + tInt * ray.direction;
-
-		Eigen::Vector3d intesityAmbient(0, 0, 0);
-		Eigen::Vector3d intesityDifuse(0, 0, 0);
-		Eigen::Vector3d intesitySpecular(0, 0, 0);
-		Eigen::Vector3d singleDifuse;
-		Eigen::Vector3d singleSpecular;
-		Eigen::Vector3d normal = (pInt - this->center).normalized();
-
-		for (auto& source : sources)
-		{
-			source->computeIntensity(pInt, ray, &intesityAmbient, &intesityDifuse, &intesitySpecular, normal, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
-		}
-
-		intesityEye = intesityDifuse + intesitySpecular + intesityAmbient;
-
-		for (int i = 0; i < 3; i++)
-		{
-			intensityAndDistance[i] = intesityEye[i];
-		}
-		intensityAndDistance[3] = tInt;
+		source->computeIntensity(pInt, ray, &intesityAmbient, &intesityDifuse, &intesitySpecular, normal, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 	}
 
-	return intensityAndDistance;
+	intesityEye = intesityDifuse + intesitySpecular + intesityAmbient;
+
+	return intesityEye;
 }
