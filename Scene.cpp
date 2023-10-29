@@ -10,7 +10,17 @@ void Scene::addSource(LightSource* source)
 	this->sources.push_back(source);
 }
 
+void Scene::addHitBox(HitBox* hitbox)
+{
+	this->hitboxes.push_back(hitbox);
+}
+
 int Scene::getNumElements()
 {
 	return (this->objects).size();
+}
+
+int Scene::getNumHitBoxes()
+{
+	return (this->hitboxes).size();
 }

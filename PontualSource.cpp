@@ -22,23 +22,29 @@ void PontualSource::computeIntensity(Eigen::Vector3d pInt, Ray ray, Eigen::Vecto
 	Eigen::Vector3d intesityDifuse = *ptrIntesityDifuse;
 	Eigen::Vector3d intesitySpecular = *ptrIntesitySpecular;
 
-	if (tempDifuse[0] > 0) {
+	if (tempDifuse[0] > 0)
+	{
 		intesityDifuse[0] += tempDifuse[0];
 	}
-	if (tempDifuse[1] > 0) {
+	if (tempDifuse[1] > 0)
+	{
 		intesityDifuse[1] += tempDifuse[1];
 	}
-	if (tempDifuse[2] > 0) {
+	if (tempDifuse[2] > 0)
+	{
 		intesityDifuse[2] += tempDifuse[2];
 	}
 
-	if (tempSpecular[0] > 0) {
+	if (tempSpecular[0] > 0)
+	{
 		intesitySpecular[0] += tempSpecular[0];
 	}
-	if (tempSpecular[1] > 0) {
+	if (tempSpecular[1] > 0)
+	{
 		intesitySpecular[1] += tempSpecular[1];
 	}
-	if (tempSpecular[2] > 0) {
+	if (tempSpecular[2] > 0)
+	{
 		intesitySpecular[2] += tempSpecular[2];
 	}
 

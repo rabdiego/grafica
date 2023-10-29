@@ -22,9 +22,17 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene)
 	Método para desenhar os objetos do cenário na tela
 	*/
 	Tensor canvas(this->numColumns, this->numLines);
-	int yL, xC, numObjects = scene.getNumElements();
+	int yL, xC, numObjects = scene.getNumElements(), numHitBoxes = scene.getNumHitBoxes();
 	Eigen::Vector3d pJ;
-	std::vector<Eigen::Array4d> intensityAndDistanceToObjects(numObjects);
+	int numObjectsVector = numObjects;
+
+	for (int i = 0; i < numHitBoxes; i++)
+	{
+		numObjectsVector += (*scene.hitboxes[i]).getNumElements();
+	}
+
+	std::vector<Eigen::Array4d> intensityAndDistanceToObjects(numObjectsVector);
+	int idx;
 
 	for (int l = 0; l < this->numLines; l++)
 	{
@@ -38,26 +46,43 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene)
 
 			Ray ray(observable, pJ);
 
+			idx = 0;
+
 			for (int i = 0; i < numObjects; i++)
 			{
-				intensityAndDistanceToObjects[i] = (*scene.objects[i]).hasInterceptedRay(ray, scene.sources);
+				intensityAndDistanceToObjects[idx] = ((*scene.objects[i]).hasInterceptedRay(ray, scene.sources));
+				idx++;
+			}
+
+			for (int i = 0; i < numHitBoxes; i++)
+			{
+				int numElements = (*scene.hitboxes[i]).getNumElements();
+				if ((*scene.hitboxes[i]).hasInterceptedRay(ray))
+				{
+					for (int j = 0; j < numElements; j++)
+					{
+						intensityAndDistanceToObjects[idx] = ((*scene.hitboxes[i]->objects[j]).hasInterceptedRay(ray, scene.sources));
+						idx++;
+					}
+				}
 			}
 
 			double minimum = -INFINITY;
-			int idx = 0;
+			int idxMin = 0;
 
-			for (int i = 0; i < numObjects; i++)
+			for (int i = 0; i < idx; i++)
 			{
 				if (intensityAndDistanceToObjects[i][3] < 0 && intensityAndDistanceToObjects[i][3] > minimum)
 				{
 					minimum = intensityAndDistanceToObjects[i][3];
-					idx = i;
+					idxMin = i;
 				}
 			}
 
-			canvas.red(l, c) = intensityAndDistanceToObjects[idx][0];
-			canvas.green(l, c) = intensityAndDistanceToObjects[idx][1];
-			canvas.blue(l, c) = intensityAndDistanceToObjects[idx][2];
+			
+			canvas.red(l, c) = intensityAndDistanceToObjects[idxMin][0];
+			canvas.green(l, c) = intensityAndDistanceToObjects[idxMin][1];
+			canvas.blue(l, c) = intensityAndDistanceToObjects[idxMin][2];
 		}
 	}
 

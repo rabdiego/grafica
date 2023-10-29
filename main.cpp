@@ -1,11 +1,13 @@
 #include <iostream>
 #include <Eigen>  // Lib para álgebra linear
 #include <SDL.h>  // Lib gráfica
+#include <ctime>
 
 // Estrutura de dados
 #include "AmbientSource.h"
 #include "Canvas.h"
 #include "Cilinder.h"
+#include "Cone.h"
 #include "LightSource.h"
 #include "Object.h"
 #include "Plane.h"
@@ -16,6 +18,7 @@
 
 int main(int argc, char* argv[])
 {
+	time_t startTime = time(NULL);
 	// Checando a inicialização do SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
@@ -28,10 +31,10 @@ int main(int argc, char* argv[])
 
 	// Parâmetros da janela e canvas
 	int windowDistance = 1000;
-	int windowWidth = 600;
-	int windowHeight = 600;
-	int numColumns = 600;
-	int numLines = 600;
+	int windowWidth = 500;
+	int windowHeight = 500;
+	int numColumns = 500;
+	int numLines = 500;
 
 	// Criação da janela
 	SDL_Window* window = SDL_CreateWindow
@@ -65,88 +68,24 @@ int main(int argc, char* argv[])
 	Canvas canvas(windowDistance, windowWidth, windowHeight, numLines, numColumns);
 	Scene scene;
 
-	double bodyRadius = 100;
-	Eigen::Vector3d bodyCenter(0, -100, -1100);
-	Eigen::Vector3d bodyKAmbient(1, 1, 1);
-	Eigen::Vector3d bodyKDif(1, 1, 1);
-	Eigen::Vector3d bodyKEsp(0, 0, 0);
-	Object* body = new Sphere(bodyRadius, bodyCenter, bodyKAmbient, bodyKDif, bodyKEsp, 0);
+	//Cone(double radius, double angle, Eigen::Vector3d centerBase, Eigen::Vector3d vertex, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex);
 
-	double headRadius = 75;
-	Eigen::Vector3d headCenter(0, 35, -1100);
-	Eigen::Vector3d headKAmbient(1, 1, 1);
-	Eigen::Vector3d headKDif(1, 1, 1);
-	Eigen::Vector3d headKEsp(0, 0, 0);
-	Object* head = new Sphere(headRadius, headCenter, headKAmbient, headKDif, headKEsp, 0);
+	double angle = 0.4;
+	Eigen::Vector3d centerBase(0, -75, -1100);
+	Eigen::Vector3d vertex(0, 75, -1100);
+	Eigen::Vector3d coneKAmbient(0.2, 0.5, 0.25);
+	Eigen::Vector3d coneKDif(0.2, 0.5, 0.25);
+	Eigen::Vector3d coneKEsp(0, 0, 0);
+	int coneSpecularIndex = 0;
+	Object* cone = new Cone(angle, centerBase, vertex, coneKAmbient, coneKDif, coneKEsp, coneSpecularIndex);
 
-	double leftEyeRadius = 20;
-	Eigen::Vector3d leftEyeCenter(-35, 55, -1045);
-	Eigen::Vector3d leftEyeKAmbient(0, 0.4, 1);
-	Eigen::Vector3d leftEyeKDif(0, 0.4, 1);
-	Eigen::Vector3d leftEyeKEsp(0.3, 0.3, 0.3);
-	Object* leftEye = new Sphere(leftEyeRadius, leftEyeCenter, leftEyeKAmbient, leftEyeKDif, leftEyeKEsp, 4);
-
-	double rightEyeRadius = 20;
-	Eigen::Vector3d rightEyeCenter(35, 55, -1045);
-	Eigen::Vector3d rightEyeKAmbient(0, 0.4, 1);
-	Eigen::Vector3d rightEyeKDif(0, 0.4, 1);
-	Eigen::Vector3d rightEyeKEsp(0.3, 0.3, 0.3);
-	Object* rightEye = new Sphere(rightEyeRadius, rightEyeCenter, rightEyeKAmbient, rightEyeKDif, rightEyeKEsp, 4);
-	
-	double upperRightMouthRadius = 10;
-	Eigen::Vector3d upperRightMouthCenter(-32, 15, -1005);
-	Eigen::Vector3d upperRightMouthKAmbient(0.4, 0.2, 0);
-	Eigen::Vector3d upperRightMouthKDif(0.4, 0.2, 0);
-	Eigen::Vector3d upperRightMouthKEsp(0, 0, 0);
-	Object* upperRightMouth = new Sphere(upperRightMouthRadius, upperRightMouthCenter, upperRightMouthKAmbient, upperRightMouthKDif, upperRightMouthKEsp, 0);
-
-	double rightMouthRadius = 10;
-	Eigen::Vector3d rightMouthCenter(-12, 5, -1005);
-	Eigen::Vector3d rightMouthKAmbient(0.4, 0.2, 0);
-	Eigen::Vector3d rightMouthKDif(0.4, 0.2, 0);
-	Eigen::Vector3d rightMouthKEsp(0, 0, 0);
-	Object* rightMouth = new Sphere(rightMouthRadius, rightMouthCenter, rightMouthKAmbient, rightMouthKDif, rightMouthKEsp, 0);
-
-	double leftMouthRadius = 10;
-	Eigen::Vector3d leftMouthCenter(12, 5, -1005);
-	Eigen::Vector3d leftMouthKAmbient(0.4, 0.2, 0);
-	Eigen::Vector3d leftMouthKDif(0.4, 0.2, 0);
-	Eigen::Vector3d leftMouthKEsp(0, 0, 0);
-	Object* leftMouth = new Sphere(leftMouthRadius, leftMouthCenter, leftMouthKAmbient, leftMouthKDif, leftMouthKEsp, 0);
-
-	double upperLeftMouthRadius = 10;
-	Eigen::Vector3d upperLeftMouthCenter(32, 15, -1005);
-	Eigen::Vector3d upperLeftMouthKAmbient(0.4, 0.2, 0);
-	Eigen::Vector3d upperLeftMouthKDif(0.4, 0.2, 0);
-	Eigen::Vector3d upperLeftMouthKEsp(0, 0, 0);
-	Object* upperLeftMouth = new Sphere(upperLeftMouthRadius, upperLeftMouthCenter, upperLeftMouthKAmbient, upperLeftMouthKDif, upperLeftMouthKEsp, 0);
-
-	double hatBaseRadius = 100;
-	Eigen::Vector3d hatBaseCenterBase(0, 110, -1100);
-	Eigen::Vector3d hatBaseCenterTop(0, 125, -1100);
-	Eigen::Vector3d hatBaseKAmbient(0.2, 0.2, 0.2);
-	Eigen::Vector3d hatBaseKDif(0.2, 0.2, 0.2);
-	Eigen::Vector3d hatBaseKEsp(0, 0, 0);
-	Object* hatBase = new Cilinder(hatBaseRadius, hatBaseCenterBase, hatBaseCenterTop, hatBaseKAmbient, hatBaseKDif, hatBaseKEsp, 0);
-
-	double hatTopRadius = 80;
-	Eigen::Vector3d hatTopCenterBase(0, 125, -1100);
-	Eigen::Vector3d hatTopCenterTop(0, 185, -1100);
-	Eigen::Vector3d hatTopKAmbient(0.2, 0.2, 0.2);
-	Eigen::Vector3d hatTopKDif(0.2, 0.2, 0.2);
-	Eigen::Vector3d hatTopKEsp(0, 0, 0);
-	Object* hatTop = new Cilinder(hatTopRadius, hatTopCenterBase, hatTopCenterTop, hatTopKAmbient, hatTopKDif, hatTopKEsp, 0);
-	
-	scene.addObject(body);
-	scene.addObject(head);
-	scene.addObject(leftEye);
-	scene.addObject(rightEye);
-	scene.addObject(upperRightMouth);
-	scene.addObject(upperLeftMouth);
-	scene.addObject(rightMouth);
-	scene.addObject(leftMouth);
-	scene.addObject(hatBase);
-	scene.addObject(hatTop);
+	double woodRadius = 20;
+	Eigen::Vector3d woodCenterBase(0, -200, -1100);
+	Eigen::Vector3d woodCenterTop(0, -75, -1100);
+	Eigen::Vector3d woodKAmbient(0.62, 0.33, 0.07);
+	Eigen::Vector3d woodKDif(0.62, 0.33, 0.07);
+	Eigen::Vector3d woodKEsp(0, 0, 0);
+	Object* wood = new Cilinder(woodRadius, woodCenterBase, woodCenterTop, woodKAmbient, woodKDif, woodKEsp, 0);
 
 	Eigen::Vector3d floorNormal(0, 1, 0);
 	Eigen::Vector3d floorCenter(0, -200, 0);
@@ -164,6 +103,8 @@ int main(int argc, char* argv[])
 	int wallSpecularIndex = 0;
 	Object* wall = new Plane(wallNormal, wallCenter, wallKAmbient, wallKDif, wallKEsp, wallSpecularIndex);
 
+	scene.addObject(cone);
+	scene.addObject(wood);
 	scene.addObject(floor);
 	scene.addObject(wall);
 
@@ -176,9 +117,12 @@ int main(int argc, char* argv[])
 
 	scene.addSource(pontual);
 	scene.addSource(ambient);
-	
+
 	// Display
+	std::cout << "oi\n";
 	Tensor display = canvas.raycast(origin, scene);
+	time_t renderTime = time(NULL);
+	std::cout << "Tempo para renderizar objetos: " << renderTime - startTime << std::endl;
 	display.normalize();
 
 	// Loop principal

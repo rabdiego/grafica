@@ -14,13 +14,16 @@ void AmbientSource::computeIntensity(Eigen::Vector3d pInt, Ray ray, Eigen::Vecto
 
 	Eigen::Vector3d intesityAmbient = *ptrIntesityAmbient;
 
-	if (temp[0] > 0) {
+	if (temp[0] > 0)
+	{
 		intesityAmbient[0] += temp[0];
 	}
-	if (temp[1] > 0) {
+	if (temp[1] > 0)
+	{
 		intesityAmbient[1] += temp[1];
 	}
-	if (temp[2] > 0) {
+	if (temp[2] > 0)
+	{
 		intesityAmbient[2] += temp[2];
 	}
 
