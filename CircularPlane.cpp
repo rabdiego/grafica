@@ -23,7 +23,7 @@ double CircularPlane::hasInterceptedRay(Ray ray)
 	return 1;
 }
 
-Eigen::Vector3d CircularPlane::computeColor(double tInt, Ray ray, std::vector<LightSource*> sources)
+Eigen::Vector3d CircularPlane::computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows)
 {
 	Eigen::Vector3d intesityEye(0, 0, 0);
 	Eigen::Vector3d intesityAmbient(0, 0, 0);
@@ -34,9 +34,12 @@ Eigen::Vector3d CircularPlane::computeColor(double tInt, Ray ray, std::vector<Li
 	Eigen::Vector3d normal = this->normal;
 	Eigen::Vector3d pInt = ray.initialPoint + tInt * ray.direction;
 
+	int idx = 0;
+
 	for (auto& source : sources)
 	{
-		source->computeIntensity(pInt, ray, &intesityAmbient, &intesityDifuse, &intesitySpecular, normal, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
+		source->computeIntensity(pInt, ray, &intesityAmbient, &intesityDifuse, &intesitySpecular, normal, this->kAmbient, this->kDif, this->kEsp, this->specularIndex, shadows[idx]);
+		idx++;
 	}
 
 	intesityEye = intesityDifuse + intesitySpecular + intesityAmbient;

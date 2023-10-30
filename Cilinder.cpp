@@ -69,7 +69,7 @@ double Cilinder::hasInterceptedRay(Ray ray)
 	return 1;
 }
 
-Eigen::Vector3d Cilinder::computeColor(double tInt, Ray ray, std::vector<LightSource*> sources)
+Eigen::Vector3d Cilinder::computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows)
 {
 	if (this->structure == 0)
 	{
@@ -86,9 +86,11 @@ Eigen::Vector3d Cilinder::computeColor(double tInt, Ray ray, std::vector<LightSo
 		Eigen::Vector3d projection = (v.dot(this->direction)) * this->direction;
 		Eigen::Vector3d normal = (v - projection).normalized();
 
+		int idx = 0;
 		for (auto& source : sources)
 		{
-			source->computeIntensity(pInt, ray, &intesityAmbient, &intesityDifuse, &intesitySpecular, normal, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
+			source->computeIntensity(pInt, ray, &intesityAmbient, &intesityDifuse, &intesitySpecular, normal, this->kAmbient, this->kDif, this->kEsp, this->specularIndex, shadows[idx]);
+			idx++;
 		}
 
 		intesityEye = intesityDifuse + intesitySpecular + intesityAmbient;
@@ -96,10 +98,10 @@ Eigen::Vector3d Cilinder::computeColor(double tInt, Ray ray, std::vector<LightSo
 	}
 	else if (this->structure == 1)
 	{
-		return this->top->computeColor(tInt, ray, sources);
+		return this->top->computeColor(tInt, ray, sources, shadows);
 	}
 	else
 	{
-		return this->bottom->computeColor(tInt, ray, sources);
+		return this->bottom->computeColor(tInt, ray, sources, shadows);
 	}
 }

@@ -66,7 +66,7 @@ double Cone::hasInterceptedRay(Ray ray)
 	return 1;
 }
 
-Eigen::Vector3d Cone::computeColor(double tInt, Ray ray, std::vector<LightSource*> sources)
+Eigen::Vector3d Cone::computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows)
 {
 	if (this->structure == 0)
 	{
@@ -82,9 +82,11 @@ Eigen::Vector3d Cone::computeColor(double tInt, Ray ray, std::vector<LightSource
 		Eigen::Vector3d PI = pInt - this->vertex;
 		Eigen::Vector3d normal = -((this->direction.cross(PI)).cross(PI)).normalized();
 
+		int idx = 0;
 		for (auto& source : sources)
 		{
-			source->computeIntensity(pInt, ray, &intesityAmbient, &intesityDifuse, &intesitySpecular, normal, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
+			source->computeIntensity(pInt, ray, &intesityAmbient, &intesityDifuse, &intesitySpecular, normal, this->kAmbient, this->kDif, this->kEsp, this->specularIndex, shadows[idx]);
+			idx++;
 		}
 
 		intesityEye = intesityDifuse + intesitySpecular + intesityAmbient;
@@ -92,6 +94,6 @@ Eigen::Vector3d Cone::computeColor(double tInt, Ray ray, std::vector<LightSource
 	}
 	else
 	{
-		return this->bottom->computeColor(tInt, ray, sources);
+		return this->bottom->computeColor(tInt, ray, sources, shadows);
 	}
 }

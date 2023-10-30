@@ -26,7 +26,7 @@ public:
 
 	Cilinder(double radius, Eigen::Vector3d centerBase, Eigen::Vector3d centerTop, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex);
 	double hasInterceptedRay(Ray ray);
-	Eigen::Vector3d computeColor(double tInt, Ray ray, std::vector<LightSource*> sources);
+	Eigen::Vector3d computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows);
 };
 
 #endif

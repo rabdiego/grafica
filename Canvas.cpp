@@ -49,6 +49,10 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene)
 
 			idx = 0;
 
+			std::vector <bool> isShadowed;
+
+			/*Calculamos as distâncias para cada objeto
+			presente na cena ou em alguma hitbox*/
 			for (int i = 0; i < numObjects; i++)
 			{
 				distanceToObjects[idx] = ((*scene.objects[i]).hasInterceptedRay(ray));
@@ -70,8 +74,9 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene)
 				}
 			}
 
+			/*Vemos qual tem distância mínima*/
 			double minimum = -INFINITY;
-			int idxMin = 0;
+			int idxMin = -1;
 
 			for (int i = 0; i < idx; i++)
 			{
@@ -82,11 +87,80 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene)
 				}
 			}
 
-			Eigen::Vector3d color = objects[idxMin]->computeColor(minimum, ray, scene.sources);
+			if (idxMin != -1)
+			{
+				Eigen::Vector3d pInt = ray.initialPoint + minimum * ray.direction;
+				Eigen::Vector3d sourceDirection(0, 0, 0);
+
+				for (auto& source : scene.sources)
+				{
+					int idx2 = 0;
+					sourceDirection = source->getDirection(pInt);
+
+					if (sourceDirection.norm() != 0)
+					{
+						std::vector<double> distanceToSource(numObjectsVector);
+						Ray sourceRay(source->origin, pInt);
+
+						for (int i = 0; i < numObjects; i++)
+						{
+							distanceToSource[idx2] = ((*scene.objects[i]).hasInterceptedRay(sourceRay));
+							idx2++;
+						}
+
+						for (int i = 0; i < numHitBoxes; i++)
+						{
+							int numElements = (*scene.hitboxes[i]).getNumElements();
+							if ((*scene.hitboxes[i]).hasInterceptedRay(sourceRay))
+							{
+								for (int j = 0; j < numElements; j++)
+								{
+									distanceToSource[idx2] = ((*scene.hitboxes[i]->objects[j]).hasInterceptedRay(sourceRay));
+									idx2++;
+								}
+							}
+						}
+
+						double minimum2 = -INFINITY;
+						int idxMin2 = -1;
+
+						for (int i = 0; i < idx2; i++)
+						{
+							if (distanceToSource[i] < 0 && distanceToSource[i] > minimum2)
+							{
+								minimum2 = distanceToSource[i];
+								idxMin2 = i;
+							}
+						}
+
+						if (idxMin == idxMin2)
+						{
+							isShadowed.push_back(false);
+						}
+						else
+						{
+							isShadowed.push_back(true);
+						}
+					}
+					else
+					{
+						isShadowed.push_back(false);
+					}
+				}
+
+				Eigen::Vector3d color = objects[idxMin]->computeColor(minimum, ray, scene.sources, isShadowed);
+
+				canvas.red(l, c) = color(0);
+				canvas.green(l, c) = color(1);
+				canvas.blue(l, c) = color(2);
+			}
+			else
+			{
+				canvas.red(l, c) = 0;
+				canvas.green(l, c) = 0;
+				canvas.blue(l, c) = 0;
+			}
 			
-			canvas.red(l, c) = color(0);
-			canvas.green(l, c) = color(1);
-			canvas.blue(l, c) = color(2);
 		}
 	}
 

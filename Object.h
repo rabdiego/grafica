@@ -16,7 +16,7 @@ public:
 	int specularIndex;
 
 	virtual double hasInterceptedRay(Ray ray) = 0;
-	virtual Eigen::Vector3d computeColor(double tInt, Ray ray, std::vector<LightSource*> sources) = 0;
+	virtual Eigen::Vector3d computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows) = 0;
 };
 
 #endif
