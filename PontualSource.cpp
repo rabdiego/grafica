@@ -22,8 +22,19 @@ void PontualSource::computeIntensity(Eigen::Vector3d pInt, Ray ray, Eigen::Vecto
 		Eigen::Vector3d rayDirectionReflex = ray.direction;
 
 		Eigen::Vector3d tempDifuse = ((this->intensity).cwiseProduct(kDif)) * normal.dot(directionToSource);
-		Eigen::Vector3d tempSpecular = ((this->intensity).cwiseProduct(kEsp)) * pow(directionToSourceReflex.dot(rayDirectionReflex), specularIndex);
+		double lr = directionToSourceReflex.dot(rayDirectionReflex);
 
+		Eigen::Vector3d tempSpecular;
+
+		if (lr >= 0)
+		{
+			tempSpecular = ((this->intensity).cwiseProduct(kEsp)) * pow(directionToSourceReflex.dot(rayDirectionReflex), specularIndex);
+		}
+		else
+		{
+			tempSpecular = Eigen::Vector3d(0, 0, 0);
+		}
+		
 		// Monkey code
 
 		Eigen::Vector3d intesityDifuse = *ptrIntesityDifuse;

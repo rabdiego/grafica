@@ -1,19 +1,19 @@
 #include "Canvas.h"
 #include <vector>
 
-Canvas::Canvas(int windowDistance, int windowWidth, int windowHeight, int numLines, int numColumns)
+Canvas::Canvas(double windowDistance, double windowWidth, double windowHeight, double numLines, double numColumns)
 {
 	this->windowDistance = windowDistance;
-	this->windowWidth = windowWidth;
-	this->windowHeight = windowHeight;
+	this->windowWidth = windowWidth;  // pov_w
+	this->windowHeight = windowHeight;  // pov_h
 	this->numLines = numLines;
 	this->numColumns = numColumns;
 
-	this->deltaX = windowWidth / numColumns;
-	this->deltaY = windowHeight / numLines;
+	this->deltaX = windowWidth / numColumns;  // dx
+	this->deltaY = windowHeight / numLines;  // dy
 
-	this->jXMin = -(windowWidth / 2);
-	this->jYMax = windowHeight / 2;
+	this->jXMin = -(windowWidth / 2);  // - half_w
+	this->jYMax = windowHeight / 2;  // half_h
 }
 
 Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene)
@@ -22,7 +22,8 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene)
 	Método para desenhar os objetos do cenário na tela
 	*/
 	Tensor canvas(this->numColumns, this->numLines);
-	int yL, xC, numObjects = scene.getNumElements(), numHitBoxes = scene.getNumHitBoxes();
+	double yL, xC;
+	int numObjects = scene.getNumElements(), numHitBoxes = scene.getNumHitBoxes();
 	Eigen::Vector3d pJ;
 	int numObjectsVector = numObjects;
 

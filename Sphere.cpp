@@ -50,3 +50,29 @@ Eigen::Vector3d Sphere::computeColor(double tInt, Ray ray, std::vector<LightSour
 
 	return intesityEye;
 }
+
+void Sphere::translate(double x, double y, double z)
+{
+	Eigen::Matrix4d m;
+	m << 1, 0, 0, x,
+		 0, 1, 0, y,
+		 0, 0, 1, z,
+		 0, 0, 0, 1;
+
+	Eigen::Vector4d center4;
+	center4 << this->center[0], this->center[1], this->center[2], 1;
+
+	center4 = m * center4;
+
+	this->center << center4[0], center4[1], center4[2];
+}
+
+void  Sphere::scale(double x, double y, double z)
+{
+	this->radius *= x;
+}
+
+void  Sphere::rotate(double x, double y, double z)
+{
+
+}

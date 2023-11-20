@@ -18,6 +18,23 @@ Cone::Cone(double angle, Eigen::Vector3d centerBase, Eigen::Vector3d vertex, Eig
 	this->bottom = new CircularPlane(-this->direction, centerBase, radius, kAmbient, kDif, kEsp, specularIndex);
 }
 
+Cone::Cone(double radius, double height, Eigen::Vector3d centerBase, Eigen::Vector3d direction, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
+{
+	this->radius = radius;
+	this->height = height;
+	this->centerBase = centerBase;
+	this->direction = direction.normalized();
+	this->kAmbient = kAmbient;
+	this->kDif = kDif;
+	this->kEsp = kEsp;
+	this->specularIndex = specularIndex;
+	this->structure = 0;
+
+	this->vertex = centerBase + height * this->direction;
+	this->angle = atan(radius / height);
+	this->bottom = new CircularPlane(-this->direction, centerBase, radius, kAmbient, kDif, kEsp, specularIndex);
+}
+
 double Cone::hasInterceptedRay(Ray ray)
 {
 	Eigen::Vector3d v = (this->vertex - ray.initialPoint);
@@ -96,4 +113,38 @@ Eigen::Vector3d Cone::computeColor(double tInt, Ray ray, std::vector<LightSource
 	{
 		return this->bottom->computeColor(tInt, ray, sources, shadows);
 	}
+}
+
+void Cone::translate(double x, double y, double z)
+{
+	Eigen::Matrix4d m;
+	m << 1, 0, 0, x,
+		 0, 1, 0, y,
+		 0, 0, 1, z,
+		 0, 0, 0, 1;
+
+	Eigen::Vector4d centerTop4;
+	Eigen::Vector4d centerBase4;
+
+	centerTop4 << this->vertex[0], this->vertex[1], this->vertex[2], 1;
+	centerBase4 << this->centerBase[0], this->centerBase[1], this->centerBase[2], 1;
+
+	centerTop4 = m * centerTop4;
+	centerBase4 = m * centerBase4;
+
+	this->vertex << centerTop4[0], centerTop4[1], centerTop4[2];
+	this->centerBase << centerBase4[0], centerBase4[1], centerBase4[2];
+
+	this->direction = (this->vertex - this->centerBase).normalized();
+	this->bottom->translate(x, y, z);
+}
+
+void Cone::scale(double x, double y, double z)
+{
+
+}
+
+void Cone::rotate(double x, double y, double z)
+{
+
 }

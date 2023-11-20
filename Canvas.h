@@ -13,17 +13,17 @@ class Canvas
 	Classe do Canvas
 	*/
 public:
-	int windowDistance;
-	int windowWidth;
-	int windowHeight;
-	int numLines;
-	int numColumns;
-	int deltaX;
-	int deltaY;
-	int jXMin;
-	int jYMax;
+	double windowDistance;
+	double windowWidth;
+	double windowHeight;
+	double numLines;
+	double numColumns;
+	double deltaX;
+	double deltaY;
+	double jXMin;
+	double jYMax;
 
-	Canvas(int windowDistance, int windowWidth, int windowHeight, int numLines, int numColumns);
+	Canvas(double windowDistance, double windowWidth, double windowHeight, double numLines, double numColumns);
 	Tensor raycast(Eigen::Vector3d observable, Scene scene);
 };
 

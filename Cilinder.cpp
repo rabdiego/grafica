@@ -18,6 +18,25 @@ Cilinder::Cilinder(double radius, Eigen::Vector3d centerBase, Eigen::Vector3d ce
 	this->structure = 0;
 }
 
+Cilinder::Cilinder(double radius, double height, Eigen::Vector3d centerBase, Eigen::Vector3d direction, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
+{
+	this->radius = radius;
+	this->height = height;
+	this->centerBase = centerBase;
+	this->direction = direction.normalized();
+
+	this->centerTop = centerBase + height * this->direction;
+
+	this->kAmbient = kAmbient;
+	this->kDif = kDif;
+	this->kEsp = kEsp;
+	this->specularIndex = specularIndex;
+
+	this->top = new CircularPlane(this->direction, this->centerTop, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
+	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
+	this->structure = 0;
+}
+
 double Cilinder::hasInterceptedRay(Ray ray)
 {
 	Eigen::Vector3d w = ray.initialPoint - this->centerBase;
@@ -104,4 +123,39 @@ Eigen::Vector3d Cilinder::computeColor(double tInt, Ray ray, std::vector<LightSo
 	{
 		return this->bottom->computeColor(tInt, ray, sources, shadows);
 	}
+}
+
+void Cilinder::translate(double x, double y, double z)
+{
+	Eigen::Matrix4d m;
+	m << 1, 0, 0, x,
+		 0, 1, 0, y,
+	  	 0, 0, 1, z,
+		 0, 0, 0, 1;
+
+	Eigen::Vector4d centerTop4;
+	Eigen::Vector4d centerBase4;
+
+	centerTop4 << this->centerTop[0], this->centerTop[1], this->centerTop[2], 1;
+	centerBase4 << this->centerBase[0], this->centerBase[1], this->centerBase[2], 1;
+
+	centerTop4 = m * centerTop4;
+	centerBase4 = m * centerBase4;
+
+	this->centerTop << centerTop4[0], centerTop4[1], centerTop4[2];
+	this->centerBase << centerBase4[0], centerBase4[1], centerBase4[2];
+
+	this->direction = (this->centerTop - this->centerBase).normalized();
+	this->bottom->translate(x, y, z);
+	this->top->translate(x, y, z);
+}
+
+void  Cilinder::scale(double x, double y, double z)
+{
+
+}
+
+void  Cilinder::rotate(double x, double y, double z)
+{
+
 }

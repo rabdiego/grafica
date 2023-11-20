@@ -46,3 +46,29 @@ Eigen::Vector3d CircularPlane::computeColor(double tInt, Ray ray, std::vector<Li
 
 	return intesityEye;
 }
+
+void CircularPlane::translate(double x, double y, double z)
+{
+	Eigen::Matrix4d m;
+	m << 1, 0, 0, x,
+		 0, 1, 0, y,
+		 0, 0, 1, z,
+		 0, 0, 0, 1;
+
+	Eigen::Vector4d center4;
+	center4 << this->center[0], this->center[1], this->center[2], 1;
+
+	center4 = m * center4;
+
+	this->center << center4[0], center4[1], center4[2];
+}
+
+void CircularPlane::scale(double x, double y, double z)
+{
+
+}
+
+void CircularPlane::rotate(double x, double y, double z)
+{
+
+}

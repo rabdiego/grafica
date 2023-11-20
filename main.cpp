@@ -30,20 +30,20 @@ int main(int argc, char* argv[])
 	Eigen::Vector3d origin(0, 0, 0);
 
 	// Parâmetros da janela e canvas
-	int windowDistance = 1000;
-	int windowWidth = 500;
-	int windowHeight = 500;
-	int numColumns = 500;
-	int numLines = 500;
+	double windowDistance = 30;
+	double windowWidth = 60;
+	double windowHeight = 60;
+	double numColumns = 500;
+	double numLines = 500;
 
 	// Criação da janela
 	SDL_Window* window = SDL_CreateWindow
 	(
-		"Esfera",
+		"Cena",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
-		windowWidth,
-		windowHeight,
+		(int) numColumns,
+		(int) numLines,
 		SDL_WINDOW_SHOWN
 	);
 
@@ -68,51 +68,78 @@ int main(int argc, char* argv[])
 	Canvas canvas(windowDistance, windowWidth, windowHeight, numLines, numColumns);
 	Scene scene;
 
-	// (Eigen::Vector3d normal, Eigen::Vector3d center, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, double specularIndex)
+	Object* sky = new Plane
+	(
+		Eigen::Vector3d(0, 0, 1), 
+		Eigen::Vector3d(0, 0, -1000), 
+		Eigen::Vector3d(0, 0.3, 0.8),
+		Eigen::Vector3d(0, 0.3, 0.8),
+		Eigen::Vector3d(0, 0, 0), 
+		1
+	);
 
-	Object* wall = new Plane(Eigen::Vector3d(0, 0, 1), Eigen::Vector3d(0, 0, -1600), Eigen::Vector3d(1, 0.8, 0.2),
-		Eigen::Vector3d(1, 0.8, 0.2), Eigen::Vector3d(0.2, 0.2, 0.2), 9);
+	Object* grass = new Plane
+	(
+		Eigen::Vector3d(0, 1, 0), 
+		Eigen::Vector3d(0, -70, 0), 
+		Eigen::Vector3d(0, 0.8, 0.3),
+		Eigen::Vector3d(0, 0.8, 0.3),
+		Eigen::Vector3d(0, 0, 0), 
+		1
+	);
 
-	Object* leftWall = new Plane(Eigen::Vector3d(1, 0, 0.16), Eigen::Vector3d(-500, 0, 0), Eigen::Vector3d(1, 0.8, 0.2),
-		Eigen::Vector3d(1, 0.8, 0.2), Eigen::Vector3d(0, 0, 0), 0);
+	Object* body = new Sphere
+	(
+		40, 
+		Eigen::Vector3d(0, -30, -100), 
+		Eigen::Vector3d(1, 1, 1), 
+		Eigen::Vector3d(1, 1, 1),
+		Eigen::Vector3d(0, 0, 0), 
+		1
+	);
 
-	Object* rightWall = new Plane(Eigen::Vector3d(-1, 0, 0.16), Eigen::Vector3d(500, 0, 0), Eigen::Vector3d(1, 0.8, 0.2),
-		Eigen::Vector3d(1, 0.8, 0.2), Eigen::Vector3d(0, 0, 0), 0);
+	body->translate(30, 60, 0);
 
-	Object* ceiling = new Plane(Eigen::Vector3d(0, -1, 0), Eigen::Vector3d(0, 200, 0), Eigen::Vector3d(0.2, 0.2, 0.2),
-		Eigen::Vector3d(0.2, 0.2, 0.2), Eigen::Vector3d(0, 0, 0), 0);
+	Object* head = new Sphere
+	(
+		30,
+		Eigen::Vector3d(0, 30, -100),
+		Eigen::Vector3d(1, 1, 1),
+		Eigen::Vector3d(1, 1, 1),
+		Eigen::Vector3d(0, 0, 0),
+		1
+	);
 
-	Object* floor = new Plane(Eigen::Vector3d(0, 1, 0), Eigen::Vector3d(0, -200, 0), Eigen::Vector3d(0.2, 0.2, 0.2),
-		Eigen::Vector3d(0.2, 0.2, 0.2), Eigen::Vector3d(0, 0, 0), 0);
+	Object* cone = new Cone
+	(
+		30,
+		100,
+		Eigen::Vector3d(0, -70, -130),
+		Eigen::Vector3d(0, 1, 0),
+		Eigen::Vector3d(0.8, 0.2, 0),
+		Eigen::Vector3d(0.8, 0.2, 0),
+		Eigen::Vector3d(0.2, 0.2, 0.2),
+		3
+	);
 
-	// (double radius, Eigen::Vector3d center, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
+	Object* cilinder = new Cilinder
+	(
+		30,
+		50,
+		Eigen::Vector3d(0, -70, -130),
+		Eigen::Vector3d(0, 1, 0),
+		Eigen::Vector3d(0.8, 0.2, 0),
+		Eigen::Vector3d(0.8, 0.2, 0),
+		Eigen::Vector3d(0.2, 0.2, 0.2),
+		3
+	);
 
-	Object* sphere = new Sphere(80, Eigen::Vector3d(-30, -120, -1100), Eigen::Vector3d(0.7, 0.2, 0.2), Eigen::Vector3d(0.7, 0.2, 0.2),
-		Eigen::Vector3d(0.2, 0.2, 0.2), 9);
+	cone->translate(-30, 140, 0);
 
-	// (double radius, Eigen::Vector3d centerBase, Eigen::Vector3d centerTop, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
-
-	Object* cilinder = new Cilinder(60, Eigen::Vector3d(120, -200, -1450), Eigen::Vector3d(120, 100, -1450), Eigen::Vector3d(0.2, 0.5, 1), Eigen::Vector3d(0.2, 0.5, 1),
-		Eigen::Vector3d(0.2, 0.2, 0.2), 9);
-
-	// (double angle, Eigen::Vector3d centerBase, Eigen::Vector3d vertex, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
-
-	Object* cone = new Cone(0.2, Eigen::Vector3d(-175, -200, -1500), Eigen::Vector3d(-175, 100, -1500), Eigen::Vector3d(0.3, 1, 0.4), Eigen::Vector3d(0.3, 1, 0.4),
-		Eigen::Vector3d(0.2, 0.2, 0.2), 9);
-
-	///*
-	scene.addObject(wall);
-	scene.addObject(floor);
-	scene.addObject(leftWall);
-	scene.addObject(rightWall);
-	scene.addObject(ceiling);
-	//*/
-	scene.addObject(sphere);
-	scene.addObject(cilinder);
 	scene.addObject(cone);
 
 	Eigen::Vector3d pontualIntensity(0.7, 0.7, 0.7);
-	Eigen::Vector3d pontualOrigin(0, 0, -800);
+	Eigen::Vector3d pontualOrigin(-30, 60, 0);
 	LightSource* pontual = new PontualSource(pontualOrigin, pontualIntensity);
 
 	Eigen::Vector3d ambientIntensity(0.3, 0.3, 0.3);
@@ -122,7 +149,6 @@ int main(int argc, char* argv[])
 	scene.addSource(ambient);
 
 	// Display
-	std::cout << "oi\n";
 	Tensor display = canvas.raycast(origin, scene);
 	time_t renderTime = time(NULL);
 	std::cout << "Tempo para renderizar objetos: " << renderTime - startTime << std::endl;
