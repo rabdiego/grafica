@@ -8,6 +8,7 @@ class Cube : public Object
 public:
 	TriangularFace* faces[12];
 	int structure;
+	Eigen::Vector3d center;
 
 	Cube(Eigen::Vector3d mainVertex, double width, double height, double depth, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex);
 	double hasInterceptedRay(Ray ray);

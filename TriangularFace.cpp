@@ -100,7 +100,7 @@ void TriangularFace::translate(double x, double y, double z)
 	{
 		vertexes4[i] << vertexes[i][0], vertexes[i][1], vertexes[i][2], 1;
 		vertexes4[i] = m * vertexes4[i];
-		vertexes[i] << vertexes4[i][0], vertexes4[i][1], vertexes[i][2];
+		vertexes[i] << vertexes4[i][0], vertexes4[i][1], vertexes4[i][2];
 	}
 
 	this->r1 = this->vertexes[1] - this->vertexes[0];
@@ -148,7 +148,7 @@ void TriangularFace::rotateX(double angle)
 	{
 		vertexes4[i] << vertexes[i][0], vertexes[i][1], vertexes[i][2], 1;
 		vertexes4[i] = rx * vertexes4[i];
-		vertexes[i] << vertexes4[i][0], vertexes4[i][1], vertexes[i][2];
+		vertexes[i] << vertexes4[i][0], vertexes4[i][1], vertexes4[i][2];
 	}
 
 	this->r1 = this->vertexes[1] - this->vertexes[0];
@@ -168,7 +168,7 @@ void TriangularFace::rotateY(double angle)
 	{
 		vertexes4[i] << vertexes[i][0], vertexes[i][1], vertexes[i][2], 1;
 		vertexes4[i] = rx * vertexes4[i];
-		vertexes[i] << vertexes4[i][0], vertexes4[i][1], vertexes[i][2];
+		vertexes[i] << vertexes4[i][0], vertexes4[i][1], vertexes4[i][2];
 	}
 
 	this->r1 = this->vertexes[1] - this->vertexes[0];
@@ -189,7 +189,7 @@ void TriangularFace::rotateZ(double angle)
 	{
 		vertexes4[i] << vertexes[i][0], vertexes[i][1], vertexes[i][2], 1;
 		vertexes4[i] = rx * vertexes4[i];
-		vertexes[i] << vertexes4[i][0], vertexes4[i][1], vertexes[i][2];
+		vertexes[i] << vertexes4[i][0], vertexes4[i][1], vertexes4[i][2];
 	}
 
 	this->r1 = this->vertexes[1] - this->vertexes[0];

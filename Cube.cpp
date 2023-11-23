@@ -23,6 +23,7 @@ public:
 #endif
 */
 
+#include <iostream>
 #include "Cube.h"
 
 Cube::Cube(Eigen::Vector3d mainVertex, double width, double height, double depth, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
@@ -32,6 +33,8 @@ Cube::Cube(Eigen::Vector3d mainVertex, double width, double height, double depth
 	this->kDif = kDif;
 	this->kEsp = kEsp;
 	this->specularIndex = specularIndex;
+
+	this->center = mainVertex + Eigen::Vector3d(width, height, -depth) / 2;
 
 	Eigen::Vector3d a = mainVertex + Eigen::Vector3d(width, 0, 0);
 	Eigen::Vector3d b = mainVertex + Eigen::Vector3d(width, height, 0);
@@ -238,9 +241,30 @@ void Cube::scale(double x, double y, double z)
 
 void Cube::rotateX(double angle)
 {
+
+	for (int i = 0; i < 12; i++)
+	{
+		faces[i]->translate
+		(
+			-this->center[0],
+			-this->center[1],
+			-this->center[2]
+		);
+	}
+
 	for (int i = 0; i < 12; i++)
 	{
 		faces[i]->rotateX(angle);
+	}
+
+	for (int i = 0; i < 12; i++)
+	{
+		faces[i]->translate
+		(
+			this->center[0],
+			this->center[1],
+			this->center[2]
+		);
 	}
 }
 
@@ -248,7 +272,27 @@ void Cube::rotateY(double angle)
 {
 	for (int i = 0; i < 12; i++)
 	{
+		faces[i]->translate
+		(
+			-this->center[0],
+			-this->center[1],
+			-this->center[2]
+		);
+	}
+
+	for (int i = 0; i < 12; i++)
+	{
 		faces[i]->rotateY(angle);
+	}
+
+	for (int i = 0; i < 12; i++)
+	{
+		faces[i]->translate
+		(
+			this->center[0],
+			this->center[1],
+			this->center[2]
+		);
 	}
 }
 
@@ -256,6 +300,26 @@ void Cube::rotateZ(double angle)
 {
 	for (int i = 0; i < 12; i++)
 	{
+		faces[i]->translate
+		(
+			-this->center[0],
+			-this->center[1],
+			-this->center[2]
+		);
+	}
+
+	for (int i = 0; i < 12; i++)
+	{
 		faces[i]->rotateZ(angle);
+	}
+
+	for (int i = 0; i < 12; i++)
+	{
+		faces[i]->translate
+		(
+			this->center[0],
+			this->center[1],
+			this->center[2]
+		);
 	}
 }
