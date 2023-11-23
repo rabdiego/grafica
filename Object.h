@@ -20,7 +20,9 @@ public:
 
 	virtual void translate(double x, double y, double z) = 0;
 	virtual void scale(double x, double y, double z) = 0;
-	virtual void rotate(double x, double y, double z) = 0;
+	virtual void rotateX(double angle) = 0;
+	virtual void rotateY(double angle) = 0;
+	virtual void rotateZ(double angle) = 0;
 };
 
 #endif

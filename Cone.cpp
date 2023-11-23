@@ -141,10 +141,72 @@ void Cone::translate(double x, double y, double z)
 
 void Cone::scale(double x, double y, double z)
 {
+	/*
+	x -> Raio
+	y -> Altura
+	z -> Nada
+	*/
 
+	this->radius *= x;
+	this->height *= y;
+
+	this->vertex = this->centerBase + this->height * this->direction;
+	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 }
 
-void Cone::rotate(double x, double y, double z)
+void  Cone::rotateX(double angle)
 {
+	Eigen::Matrix4d rx;
+	rx << 1, 0, 0, 0,
+		0, cos(angle), -sin(angle), 0,
+		0, sin(angle), cos(angle), 0,
+		0, 0, 0, 1;
 
+	Eigen::Vector4d newDir;
+	newDir << this->direction[0], this->direction[1], this->direction[2], 0;
+
+	newDir = rx * newDir;
+	this->direction << newDir[0], newDir[1], newDir[2];
+	this->direction = (this->direction).normalized();
+
+	this->vertex = this->centerBase + this->height * this->direction;
+	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
+}
+
+void  Cone::rotateY(double angle)
+{
+	Eigen::Matrix4d rx;
+	rx << cos(angle), 0, sin(angle), 0,
+		0, 1, 0, 0,
+		-sin(angle), 0, cos(angle), 0,
+		0, 0, 0, 1;
+
+	Eigen::Vector4d newDir;
+	newDir << this->direction[0], this->direction[1], this->direction[2], 0;
+
+	newDir = rx * newDir;
+	this->direction << newDir[0], newDir[1], newDir[2];
+	this->direction = (this->direction).normalized();
+
+	this->vertex = this->centerBase + this->height * this->direction;
+	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
+}
+
+void  Cone::rotateZ(double angle)
+{
+	Eigen::Matrix4d rx;
+	rx << cos(angle), -sin(angle), 0, 0,
+		sin(angle), cos(angle), 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1;
+
+	Eigen::Vector4d newDir;
+	newDir << this->direction[0], this->direction[1], this->direction[2], 0;
+
+	newDir = rx * newDir;
+	this->direction << newDir[0], newDir[1], newDir[2];
+	this->direction = (this->direction).normalized();
+
+	this->vertex = this->centerBase + this->height * this->direction;
+	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 }

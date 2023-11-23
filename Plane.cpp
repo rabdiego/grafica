@@ -67,7 +67,50 @@ void Plane::scale(double x, double y, double z)
 
 }
 
-void Plane::rotate(double x, double y, double z)
+void  Plane::rotateX(double angle)
 {
+	Eigen::Matrix4d rx;
+	rx << 1, 0, 0, 0,
+		0, cos(angle), -sin(angle), 0,
+		0, sin(angle), cos(angle), 0,
+		0, 0, 0, 1;
 
+	Eigen::Vector4d newDir;
+	newDir << this->normal[0], this->normal[1], this->normal[2], 0;
+
+	newDir = rx * newDir;
+	this->normal << newDir[0], newDir[1], newDir[2];
+	this->normal = (this->normal).normalized();
+}
+
+void  Plane::rotateY(double angle)
+{
+	Eigen::Matrix4d rx;
+	rx << cos(angle), 0, sin(angle), 0,
+		0, 1, 0, 0,
+		-sin(angle), 0, cos(angle), 0,
+		0, 0, 0, 1;
+
+	Eigen::Vector4d newDir;
+	newDir << this->normal[0], this->normal[1], this->normal[2], 0;
+
+	newDir = rx * newDir;
+	this->normal << newDir[0], newDir[1], newDir[2];
+	this->normal = (this->normal).normalized();
+}
+
+void  Plane::rotateZ(double angle)
+{
+	Eigen::Matrix4d rx;
+	rx << cos(angle), -sin(angle), 0, 0,
+		sin(angle), cos(angle), 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1;
+
+	Eigen::Vector4d newDir;
+	newDir << this->normal[0], this->normal[1], this->normal[2], 0;
+
+	newDir = rx * newDir;
+	this->normal << newDir[0], newDir[1], newDir[2];
+	this->normal = (this->normal).normalized();
 }

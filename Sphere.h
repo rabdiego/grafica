@@ -23,7 +23,9 @@ public:
 
 	void translate(double x, double y, double z);
 	void scale(double x, double y, double z);
-	void rotate(double x, double y, double z);
+	void rotateX(double angle);
+	void rotateY(double angle);
+	void rotateZ(double angle);
 };
 
 #endif

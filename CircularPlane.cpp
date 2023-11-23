@@ -68,7 +68,17 @@ void CircularPlane::scale(double x, double y, double z)
 
 }
 
-void CircularPlane::rotate(double x, double y, double z)
+void  CircularPlane::rotateX(double angle)
+{
+
+}
+
+void  CircularPlane::rotateY(double angle)
+{
+
+}
+
+void  CircularPlane::rotateZ(double angle)
 {
 
 }

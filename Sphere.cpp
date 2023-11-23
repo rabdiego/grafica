@@ -72,7 +72,17 @@ void  Sphere::scale(double x, double y, double z)
 	this->radius *= x;
 }
 
-void  Sphere::rotate(double x, double y, double z)
+void  Sphere::rotateX(double angle)
+{
+
+}
+
+void  Sphere::rotateY(double angle)
+{
+
+}
+
+void  Sphere::rotateZ(double angle)
 {
 
 }
