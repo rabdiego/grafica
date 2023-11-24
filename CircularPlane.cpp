@@ -1,7 +1,7 @@
 #include "CircularPlane.h"
 
 CircularPlane::CircularPlane(Eigen::Vector3d normal, Eigen::Vector3d center, double radius, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
-	: Plane(normal, center, kAmbient, kDif, kEsp, specularIndex)
+	: Plane(NULL, normal, center, kAmbient, kDif, kEsp, specularIndex)
 {
 	this->radius = radius;
 }

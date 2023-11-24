@@ -1,13 +1,64 @@
 #include "Plane.h"
+#include <iostream>
 
-Plane::Plane(Eigen::Vector3d normal, Eigen::Vector3d center, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, double specularIndex)
+SDL_Color GetPixelColor(const SDL_Surface* pSurface, const int X, const int Y)
 {
+	// Bytes per pixel
+	const Uint8 Bpp = pSurface->format->BytesPerPixel;
+
+	/*
+	Retrieve the address to a specific pixel
+	pSurface->pixels	= an array containing the SDL_Surface' pixels
+	pSurface->pitch		= the length of a row of pixels (in bytes)
+	X and Y				= the offset on where on the image to retrieve the pixel, (0, 0) is in the upper left corner of the image
+	*/
+	Uint8* pPixel = (Uint8*)pSurface->pixels + Y * pSurface->pitch + X * Bpp;
+
+	Uint32 PixelData = *(Uint32*)pPixel;
+
+	SDL_Color Color = { 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE };
+
+	// Retrieve the RGB values of the specific pixel
+	SDL_GetRGB(PixelData, pSurface->format, &Color.r, &Color.g, &Color.b);
+
+	return Color;
+}
+
+Plane::Plane(SDL_Surface* texture, Eigen::Vector3d normal, Eigen::Vector3d center, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, double specularIndex)
+{
+	this->texture = texture;
 	this->normal = normal.normalized();
 	this->center = center;
 	this->kAmbient = kAmbient;
 	this->kDif = kDif;
 	this->kEsp = kEsp;
 	this->specularIndex = specularIndex;
+
+	int menor = 0, menorValor = normal[0];
+	for (int i = 1; i < 3; i++)
+	{
+		if (normal[i] < menorValor)
+		{
+			menor = i;
+			menorValor = normal[i];
+		}
+	}
+
+	if (menor == 0)
+	{
+		this->axis1 << 0, -normal[2], normal[1];
+	}
+	else if (menor == 1)
+	{
+		this->axis1 << -normal[2], 0, normal[0];
+	}
+	else
+	{
+		this->axis1 << -normal[1], normal[0], 0;
+	}
+
+	this->axis1 = this->axis1.normalized();
+	this->axis2 = (normal.cross(this->axis1)).normalized();
 }
 
 double Plane::hasInterceptedRay(Ray ray)
@@ -27,12 +78,25 @@ Eigen::Vector3d Plane::computeColor(double tInt, Ray ray, std::vector<LightSourc
 
 	Eigen::Vector3d pInt = ray.initialPoint + tInt * ray.direction;
 
-	Eigen::Vector3d intesityAmbient(0, 0, 0);
+	Eigen::Vector2d pIntBase;
+	pIntBase << abs(((int)(this->axis1.dot(pInt - this->center))) % 256), abs(((int)(this->axis2.dot(pInt - this->center))) % 256);
+
+	Eigen::Vector3d intesityAmbient;
 	Eigen::Vector3d intesityDifuse(0, 0, 0);
 	Eigen::Vector3d intesitySpecular(0, 0, 0);
 	Eigen::Vector3d singleDifuse;
 	Eigen::Vector3d singleSpecular;
 	Eigen::Vector3d normal = this->normal;
+
+	if (this->texture == NULL)
+	{
+		intesityAmbient << 0, 0, 0;
+	}
+	else
+	{
+		SDL_Color colorToPaint = GetPixelColor(this->texture, pIntBase[0], pIntBase[1]);
+		intesityAmbient << (int)colorToPaint.r, (int)colorToPaint.g, (int)colorToPaint.b;
+	}
 
 	int idx = 0;
 	for (auto& source : sources)
@@ -81,6 +145,32 @@ void  Plane::rotateX(double angle)
 	newDir = rx * newDir;
 	this->normal << newDir[0], newDir[1], newDir[2];
 	this->normal = (this->normal).normalized();
+
+	int menor = 0, menorValor = normal[0];
+	for (int i = 1; i < 3; i++)
+	{
+		if (normal[i] < menorValor)
+		{
+			menor = i;
+			menorValor = normal[i];
+		}
+	}
+
+	if (menor == 0)
+	{
+		this->axis1 << 0, -normal[2], normal[1];
+	}
+	else if (menor == 1)
+	{
+		this->axis1 << -normal[2], 0, normal[0];
+	}
+	else
+	{
+		this->axis1 << -normal[1], normal[0], 0;
+	}
+
+	this->axis1 = this->axis1.normalized();
+	this->axis2 = (normal.cross(this->axis1)).normalized();
 }
 
 void  Plane::rotateY(double angle)
@@ -97,6 +187,32 @@ void  Plane::rotateY(double angle)
 	newDir = rx * newDir;
 	this->normal << newDir[0], newDir[1], newDir[2];
 	this->normal = (this->normal).normalized();
+
+	int menor = 0, menorValor = normal[0];
+	for (int i = 1; i < 3; i++)
+	{
+		if (normal[i] < menorValor)
+		{
+			menor = i;
+			menorValor = normal[i];
+		}
+	}
+
+	if (menor == 0)
+	{
+		this->axis1 << 0, -normal[2], normal[1];
+	}
+	else if (menor == 1)
+	{
+		this->axis1 << -normal[2], 0, normal[0];
+	}
+	else
+	{
+		this->axis1 << -normal[1], normal[0], 0;
+	}
+
+	this->axis1 = this->axis1.normalized();
+	this->axis2 = (normal.cross(this->axis1)).normalized();
 }
 
 void  Plane::rotateZ(double angle)
@@ -113,4 +229,30 @@ void  Plane::rotateZ(double angle)
 	newDir = rx * newDir;
 	this->normal << newDir[0], newDir[1], newDir[2];
 	this->normal = (this->normal).normalized();
+
+	int menor = 0, menorValor = normal[0];
+	for (int i = 1; i < 3; i++)
+	{
+		if (normal[i] < menorValor)
+		{
+			menor = i;
+			menorValor = normal[i];
+		}
+	}
+
+	if (menor == 0)
+	{
+		this->axis1 << 0, -normal[2], normal[1];
+	}
+	else if (menor == 1)
+	{
+		this->axis1 << -normal[2], 0, normal[0];
+	}
+	else
+	{
+		this->axis1 << -normal[1], normal[0], 0;
+	}
+
+	this->axis1 = this->axis1.normalized();
+	this->axis2 = (normal.cross(this->axis1)).normalized();
 }

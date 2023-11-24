@@ -1,4 +1,5 @@
 #include "Object.h"
+#include <SDL.h>
 
 #ifndef Plane_H
 #define Plane_H
@@ -9,7 +10,12 @@ public:
 	Eigen::Vector3d normal;
 	Eigen::Vector3d center;
 
-	Plane(Eigen::Vector3d normal, Eigen::Vector3d center, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, double specularIndex);
+	SDL_Surface* texture;
+
+	Eigen::Vector3d axis1;
+	Eigen::Vector3d axis2;
+
+	Plane(SDL_Surface* texture, Eigen::Vector3d normal, Eigen::Vector3d center, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, double specularIndex);
 	double hasInterceptedRay(Ray ray);
 	Eigen::Vector3d computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows);
 
