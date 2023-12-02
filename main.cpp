@@ -21,7 +21,6 @@
 
 int main(int argc, char* argv[])
 {
-	time_t startTime = time(NULL);
 	// Checando a inicialização do SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
@@ -67,16 +66,16 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
+	// Canvas e cena
+	Canvas canvas(windowDistance, windowWidth, windowHeight, numLines, numColumns);
+	Scene scene;
+
 	// Texturas
 
 	SDL_Surface* springTexture = IMG_Load("spring.png");
 	SDL_Surface* summerTexture = IMG_Load("summer.png");
 	SDL_Surface* autumnTexture = IMG_Load("fall.png");
 	SDL_Surface* winterTexture = IMG_Load("winter.png");
-
-	// Canvas e cena
-	Canvas canvas(windowDistance, windowWidth, windowHeight, numLines, numColumns);
-	Scene scene;
 
 	/* Background */
 	Object* sky = new Plane
@@ -92,7 +91,7 @@ int main(int argc, char* argv[])
 
 	Object* grass = new Plane
 	(
-		autumnTexture,
+		summerTexture,
 		Eigen::Vector3d(0, 1, 0),
 		Eigen::Vector3d(0, -100, 0),
 		Eigen::Vector3d(0, 0, 0),
@@ -193,8 +192,8 @@ int main(int argc, char* argv[])
 	(
 		30,
 		Eigen::Vector3d(130, -30, -230),
-		Eigen::Vector3d(240, 104, 4),
-		Eigen::Vector3d(240, 104, 4),
+		Eigen::Vector3d(12, 242, 0),
+		Eigen::Vector3d(12, 242, 0),
 		Eigen::Vector3d(0, 0, 0),
 		0
 	);
@@ -203,8 +202,8 @@ int main(int argc, char* argv[])
 	(
 		22,
 		Eigen::Vector3d(130, 0, -230),
-		Eigen::Vector3d(240, 104, 4),
-		Eigen::Vector3d(240, 104, 4),
+		Eigen::Vector3d(12, 242, 0),
+		Eigen::Vector3d(12, 242, 0),
 		Eigen::Vector3d(0, 0, 0),
 		0
 	);
@@ -225,8 +224,8 @@ int main(int argc, char* argv[])
 	(
 		30,
 		Eigen::Vector3d(130, -30, -300),
-		Eigen::Vector3d(240, 104, 4),
-		Eigen::Vector3d(240, 104, 4),
+		Eigen::Vector3d(12, 242, 0),
+		Eigen::Vector3d(12, 242, 0),
 		Eigen::Vector3d(0, 0, 0),
 		0
 	);
@@ -235,8 +234,8 @@ int main(int argc, char* argv[])
 	(
 		22,
 		Eigen::Vector3d(130, 0, -300),
-		Eigen::Vector3d(240, 104, 4),
-		Eigen::Vector3d(240, 104, 4),
+		Eigen::Vector3d(12, 242, 0),
+		Eigen::Vector3d(12, 242, 0),
 		Eigen::Vector3d(0, 0, 0),
 		0
 	);
@@ -257,8 +256,8 @@ int main(int argc, char* argv[])
 	(
 		30,
 		Eigen::Vector3d(130, -30, -160),
-		Eigen::Vector3d(240, 104, 4),
-		Eigen::Vector3d(240, 104, 4),
+		Eigen::Vector3d(12, 242, 0),
+		Eigen::Vector3d(12, 242, 0),
 		Eigen::Vector3d(0, 0, 0),
 		0
 	);
@@ -267,8 +266,8 @@ int main(int argc, char* argv[])
 	(
 		22,
 		Eigen::Vector3d(130, 0, -160),
-		Eigen::Vector3d(240, 104, 4),
-		Eigen::Vector3d(240, 104, 4),
+		Eigen::Vector3d(12, 242, 0),
+		Eigen::Vector3d(12, 242, 0),
 		Eigen::Vector3d(0, 0, 0),
 		0
 	);
@@ -459,7 +458,7 @@ int main(int argc, char* argv[])
 		Eigen::Vector3d(40, 40, 40),
 		6
 	);
-
+	scene.addObject(oakLeavesBottom2);
 	
 	scene.addObject(sky);
 	scene.addObject(grass);
@@ -470,7 +469,7 @@ int main(int argc, char* argv[])
 	scene.addObject(pineLog1);
 	scene.addObject(pineLog2);
 	scene.addObject(pineLog3);
-	
+
 	scene.addObject(oakLeavesBottom1);
 	scene.addObject(oakLeavesBottom2);
 	scene.addObject(oakLeavesBottom3);
@@ -480,7 +479,7 @@ int main(int argc, char* argv[])
 	scene.addObject(oakLog1);
 	scene.addObject(oakLog2);
 	scene.addObject(oakLog3);
-	
+
 	scene.addHitBox(tableHitBox);
 	scene.addHitBox(leg1HitBox);
 	scene.addHitBox(leg2HitBox);
@@ -508,6 +507,8 @@ int main(int argc, char* argv[])
 	scene.addSource(ambient);
 
 	// Display
+	std::cout << "Renderização iniciada.\n";
+	time_t startTime = time(NULL);
 	Tensor display = canvas.raycast(origin, scene);
 	time_t renderTime = time(NULL);
 	std::cout << "Tempo para renderizar objetos: " << renderTime - startTime << std::endl;
@@ -516,6 +517,8 @@ int main(int argc, char* argv[])
 	// Loop principal
 	bool isRunning = true;
 	SDL_Event event;
+	double mouseX, mouseY, mouseX2, mouseY2;
+	int season = 1;
 
 	while (isRunning)
 	{
@@ -524,6 +527,510 @@ int main(int argc, char* argv[])
 			if (event.type == SDL_QUIT)
 			{
 				isRunning = false;
+			}
+			else if (event.type == SDL_MOUSEBUTTONDOWN)
+			{
+				mouseX = (double) event.motion.x;
+				mouseY = (double) event.motion.y;
+
+				mouseY2 = canvas.jYMax - mouseY * canvas.deltaY - canvas.deltaY / 2;
+				mouseX2 = canvas.jXMin + mouseX * canvas.deltaX + canvas.deltaX / 2;
+
+				Ray pickRay
+				(
+					origin,
+					Eigen::Vector3d(mouseX2, mouseY2, -canvas.windowDistance)
+				);
+
+				if (springButton->hasInterceptedRay(pickRay) < 0)
+				{
+					if (season != 0)
+					{
+						scene.cleanObjects();
+
+						Object* grass = new Plane
+						(
+							springTexture,
+							Eigen::Vector3d(0, 1, 0),
+							Eigen::Vector3d(0, -100, 0),
+							Eigen::Vector3d(0, 0, 0),
+							Eigen::Vector3d(100, 100, 100),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesBottom1 = new Sphere
+						(
+							30,
+							Eigen::Vector3d(130, -30, -230),
+							Eigen::Vector3d(255, 72, 132),
+							Eigen::Vector3d(255, 72, 132),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesTop1 = new Sphere
+						(
+							22,
+							Eigen::Vector3d(130, 0, -230),
+							Eigen::Vector3d(255, 72, 132),
+							Eigen::Vector3d(255, 72, 132),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesBottom2 = new Sphere
+						(
+							30,
+							Eigen::Vector3d(130, -30, -300),
+							Eigen::Vector3d(255, 72, 132),
+							Eigen::Vector3d(255, 72, 132),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesTop2 = new Sphere
+						(
+							22,
+							Eigen::Vector3d(130, 0, -300),
+							Eigen::Vector3d(255, 72, 132),
+							Eigen::Vector3d(255, 72, 132),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesBottom3 = new Sphere
+						(
+							30,
+							Eigen::Vector3d(130, -30, -160),
+							Eigen::Vector3d(255, 72, 132),
+							Eigen::Vector3d(255, 72, 132),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesTop3 = new Sphere
+						(
+							22,
+							Eigen::Vector3d(130, 0, -160),
+							Eigen::Vector3d(255, 72, 132),
+							Eigen::Vector3d(255, 72, 132),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						scene.addObject(sky);
+						scene.addObject(grass);
+
+						scene.addObject(pineLeaves1);
+						scene.addObject(pineLeaves2);
+						scene.addObject(pineLeaves3);
+						scene.addObject(pineLog1);
+						scene.addObject(pineLog2);
+						scene.addObject(pineLog3);
+
+						scene.addObject(oakLeavesBottom1);
+						scene.addObject(oakLeavesBottom2);
+						scene.addObject(oakLeavesBottom3);
+						scene.addObject(oakLeavesTop1);
+						scene.addObject(oakLeavesTop2);
+						scene.addObject(oakLeavesTop3);
+						scene.addObject(oakLog1);
+						scene.addObject(oakLog2);
+						scene.addObject(oakLog3);
+
+						scene.addHitBox(tableHitBox);
+						scene.addHitBox(leg1HitBox);
+						scene.addHitBox(leg2HitBox);
+						scene.addHitBox(leg3HitBox);
+						scene.addHitBox(leg4HitBox);
+
+						scene.addObject(springButton);
+						scene.addObject(summerButton);
+						scene.addObject(autumnButton);
+						scene.addObject(winterButton);
+
+						std::cout << "Primavera iniciada\n";
+						startTime = time(NULL);
+						display = canvas.raycast(origin, scene);
+						renderTime = time(NULL);
+						std::cout << "Tempo para renderizar objetos: " << renderTime - startTime << std::endl;
+						display.normalize();
+						season = 0;
+					}
+					else
+					{
+						std::cout << "Já está na primavera" << std::endl;
+					}
+				}
+				else if (summerButton->hasInterceptedRay(pickRay) < 0)
+				{
+					if (season != 1)
+					{
+						scene.cleanObjects();
+
+						Object* grass = new Plane
+						(
+							summerTexture,
+							Eigen::Vector3d(0, 1, 0),
+							Eigen::Vector3d(0, -100, 0),
+							Eigen::Vector3d(0, 0, 0),
+							Eigen::Vector3d(100, 100, 100),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesBottom1 = new Sphere
+						(
+							30,
+							Eigen::Vector3d(130, -30, -230),
+							Eigen::Vector3d(12, 242, 0),
+							Eigen::Vector3d(12, 242, 0),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesTop1 = new Sphere
+						(
+							22,
+							Eigen::Vector3d(130, 0, -230),
+							Eigen::Vector3d(12, 242, 0),
+							Eigen::Vector3d(12, 242, 0),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesBottom2 = new Sphere
+						(
+							30,
+							Eigen::Vector3d(130, -30, -300),
+							Eigen::Vector3d(12, 242, 0),
+							Eigen::Vector3d(12, 242, 0),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesTop2 = new Sphere
+						(
+							22,
+							Eigen::Vector3d(130, 0, -300),
+							Eigen::Vector3d(12, 242, 0),
+							Eigen::Vector3d(12, 242, 0),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesBottom3 = new Sphere
+						(
+							30,
+							Eigen::Vector3d(130, -30, -160),
+							Eigen::Vector3d(12, 242, 0),
+							Eigen::Vector3d(12, 242, 0),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesTop3 = new Sphere
+						(
+							22,
+							Eigen::Vector3d(130, 0, -160),
+							Eigen::Vector3d(12, 242, 0),
+							Eigen::Vector3d(12, 242, 0),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						scene.addObject(sky);
+						scene.addObject(grass);
+
+						scene.addObject(pineLeaves1);
+						scene.addObject(pineLeaves2);
+						scene.addObject(pineLeaves3);
+						scene.addObject(pineLog1);
+						scene.addObject(pineLog2);
+						scene.addObject(pineLog3);
+
+						scene.addObject(oakLeavesBottom1);
+						scene.addObject(oakLeavesBottom2);
+						scene.addObject(oakLeavesBottom3);
+						scene.addObject(oakLeavesTop1);
+						scene.addObject(oakLeavesTop2);
+						scene.addObject(oakLeavesTop3);
+						scene.addObject(oakLog1);
+						scene.addObject(oakLog2);
+						scene.addObject(oakLog3);
+
+						scene.addHitBox(tableHitBox);
+						scene.addHitBox(leg1HitBox);
+						scene.addHitBox(leg2HitBox);
+						scene.addHitBox(leg3HitBox);
+						scene.addHitBox(leg4HitBox);
+
+						scene.addObject(springButton);
+						scene.addObject(summerButton);
+						scene.addObject(autumnButton);
+						scene.addObject(winterButton);
+
+						std::cout << "Verão iniciado\n";
+						startTime = time(NULL);
+						display = canvas.raycast(origin, scene);
+						renderTime = time(NULL);
+						std::cout << "Tempo para renderizar objetos: " << renderTime - startTime << std::endl;
+						display.normalize();
+						season = 1;
+					}
+					else
+					{
+						std::cout << "Já está no verão" << std::endl;
+					}
+				}
+				else if (autumnButton->hasInterceptedRay(pickRay) < 0)
+				{
+					if (season != 2)
+					{
+						scene.cleanObjects();
+
+						Object* grass = new Plane
+						(
+							autumnTexture,
+							Eigen::Vector3d(0, 1, 0),
+							Eigen::Vector3d(0, -100, 0),
+							Eigen::Vector3d(0, 0, 0),
+							Eigen::Vector3d(100, 100, 100),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesBottom1 = new Sphere
+						(
+							30,
+							Eigen::Vector3d(130, -30, -230),
+							Eigen::Vector3d(240, 104, 4),
+							Eigen::Vector3d(240, 104, 4),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesTop1 = new Sphere
+						(
+							22,
+							Eigen::Vector3d(130, 0, -230),
+							Eigen::Vector3d(240, 104, 4),
+							Eigen::Vector3d(240, 104, 4),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesBottom2 = new Sphere
+						(
+							30,
+							Eigen::Vector3d(130, -30, -300),
+							Eigen::Vector3d(240, 104, 4),
+							Eigen::Vector3d(240, 104, 4),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesTop2 = new Sphere
+						(
+							22,
+							Eigen::Vector3d(130, 0, -300),
+							Eigen::Vector3d(240, 104, 4),
+							Eigen::Vector3d(240, 104, 4),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesBottom3 = new Sphere
+						(
+							30,
+							Eigen::Vector3d(130, -30, -160),
+							Eigen::Vector3d(240, 104, 4),
+							Eigen::Vector3d(240, 104, 4),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesTop3 = new Sphere
+						(
+							22,
+							Eigen::Vector3d(130, 0, -160),
+							Eigen::Vector3d(240, 104, 4),
+							Eigen::Vector3d(240, 104, 4),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						scene.addObject(sky);
+						scene.addObject(grass);
+
+						scene.addObject(pineLeaves1);
+						scene.addObject(pineLeaves2);
+						scene.addObject(pineLeaves3);
+						scene.addObject(pineLog1);
+						scene.addObject(pineLog2);
+						scene.addObject(pineLog3);
+
+						scene.addObject(oakLeavesBottom1);
+						scene.addObject(oakLeavesBottom2);
+						scene.addObject(oakLeavesBottom3);
+						scene.addObject(oakLeavesTop1);
+						scene.addObject(oakLeavesTop2);
+						scene.addObject(oakLeavesTop3);
+						scene.addObject(oakLog1);
+						scene.addObject(oakLog2);
+						scene.addObject(oakLog3);
+
+						scene.addHitBox(tableHitBox);
+						scene.addHitBox(leg1HitBox);
+						scene.addHitBox(leg2HitBox);
+						scene.addHitBox(leg3HitBox);
+						scene.addHitBox(leg4HitBox);
+
+						scene.addObject(springButton);
+						scene.addObject(summerButton);
+						scene.addObject(autumnButton);
+						scene.addObject(winterButton);
+
+						std::cout << "Outono iniciado\n";
+						startTime = time(NULL);
+						display = canvas.raycast(origin, scene);
+						renderTime = time(NULL);
+						std::cout << "Tempo para renderizar objetos: " << renderTime - startTime << std::endl;
+						display.normalize();
+						season = 2;
+					}
+					else
+					{
+						std::cout << "Já está no outono" << std::endl;
+					}
+				}
+				else if (winterButton->hasInterceptedRay(pickRay) < 0)
+				{
+					if (season != 3)
+					{
+						scene.cleanObjects();
+
+						Object* grass = new Plane
+						(
+							winterTexture,
+							Eigen::Vector3d(0, 1, 0),
+							Eigen::Vector3d(0, -100, 0),
+							Eigen::Vector3d(0, 0, 0),
+							Eigen::Vector3d(100, 100, 100),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesBottom1 = new Sphere
+						(
+							30,
+							Eigen::Vector3d(130, -30, -230),
+							Eigen::Vector3d(255, 255, 255),
+							Eigen::Vector3d(255, 255, 255),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesTop1 = new Sphere
+						(
+							22,
+							Eigen::Vector3d(130, 0, -230),
+							Eigen::Vector3d(255, 255, 255),
+							Eigen::Vector3d(255, 255, 255),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesBottom2 = new Sphere
+						(
+							30,
+							Eigen::Vector3d(130, -30, -300),
+							Eigen::Vector3d(255, 255, 255),
+							Eigen::Vector3d(255, 255, 255),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesTop2 = new Sphere
+						(
+							22,
+							Eigen::Vector3d(130, 0, -300),
+							Eigen::Vector3d(255, 255, 255),
+							Eigen::Vector3d(255, 255, 255),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesBottom3 = new Sphere
+						(
+							30,
+							Eigen::Vector3d(130, -30, -160),
+							Eigen::Vector3d(255, 255, 255),
+							Eigen::Vector3d(255, 255, 255),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						Object* oakLeavesTop3 = new Sphere
+						(
+							22,
+							Eigen::Vector3d(130, 0, -160),
+							Eigen::Vector3d(255, 255, 255),
+							Eigen::Vector3d(255, 255, 255),
+							Eigen::Vector3d(0, 0, 0),
+							0
+						);
+
+						scene.addObject(sky);
+						scene.addObject(grass);
+
+						scene.addObject(pineLeaves1);
+						scene.addObject(pineLeaves2);
+						scene.addObject(pineLeaves3);
+						scene.addObject(pineLog1);
+						scene.addObject(pineLog2);
+						scene.addObject(pineLog3);
+
+						scene.addObject(oakLeavesBottom1);
+						scene.addObject(oakLeavesBottom2);
+						scene.addObject(oakLeavesBottom3);
+						scene.addObject(oakLeavesTop1);
+						scene.addObject(oakLeavesTop2);
+						scene.addObject(oakLeavesTop3);
+						scene.addObject(oakLog1);
+						scene.addObject(oakLog2);
+						scene.addObject(oakLog3);
+
+						scene.addHitBox(tableHitBox);
+						scene.addHitBox(leg1HitBox);
+						scene.addHitBox(leg2HitBox);
+						scene.addHitBox(leg3HitBox);
+						scene.addHitBox(leg4HitBox);
+
+						scene.addObject(rogerBody);
+						scene.addObject(rogerHead);
+						scene.addObject(rogerLeftEye);
+						scene.addObject(rogerRightEye);
+
+						scene.addObject(springButton);
+						scene.addObject(summerButton);
+						scene.addObject(autumnButton);
+						scene.addObject(winterButton);
+
+						std::cout << "Inverno iniciado\n";
+						startTime = time(NULL);
+						display = canvas.raycast(origin, scene);
+						renderTime = time(NULL);
+						std::cout << "Tempo para renderizar objetos: " << renderTime - startTime << std::endl;
+						display.normalize();
+						season = 3;
+					}
+					else
+					{
+						std::cout << "Já está no inverno" << std::endl;
+					}
+				}
 			}
 		}
 

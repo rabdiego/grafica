@@ -16,6 +16,7 @@ public:
 	void addObject(Object* object);
 	void addHitBox(HitBox* hitbox);
 	void addSource(LightSource* source);
+	void cleanObjects();
 	int getNumElements();
 	int getNumHitBoxes();
 };

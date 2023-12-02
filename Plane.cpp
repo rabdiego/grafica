@@ -1,5 +1,6 @@
 #include "Plane.h"
 #include <iostream>
+#include <cmath>
 
 SDL_Color GetPixelColor(const SDL_Surface* pSurface, const int X, const int Y)
 {
@@ -34,10 +35,11 @@ Plane::Plane(SDL_Surface* texture, Eigen::Vector3d normal, Eigen::Vector3d cente
 	this->kEsp = kEsp;
 	this->specularIndex = specularIndex;
 
-	int menor = 0, menorValor = normal[0];
+	int menor;
+	double menorValor = INFINITY;
 	for (int i = 1; i < 3; i++)
 	{
-		if (normal[i] < menorValor)
+		if (std::abs(normal[i]) < menorValor)
 		{
 			menor = i;
 			menorValor = normal[i];

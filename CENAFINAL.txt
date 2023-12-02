@@ -1,5 +1,14 @@
+// Texturas
+
+	SDL_Surface* springTexture = IMG_Load("spring.png");
+	SDL_Surface* summerTexture = IMG_Load("summer.png");
+	SDL_Surface* autumnTexture = IMG_Load("fall.png");
+	SDL_Surface* winterTexture = IMG_Load("winter.png");
+
+	/* Background */
 	Object* sky = new Plane
 	(
+		NULL,
 		Eigen::Vector3d(0, 0, 1),
 		Eigen::Vector3d(0, 0, -1000),
 		Eigen::Vector3d(32, 116, 219),
@@ -10,16 +19,16 @@
 
 	Object* grass = new Plane
 	(
+		winterTexture,
 		Eigen::Vector3d(0, 1, 0),
 		Eigen::Vector3d(0, -100, 0),
-		Eigen::Vector3d(51, 224, 27),
-		Eigen::Vector3d(51, 224, 27),
+		Eigen::Vector3d(0, 0, 0),
+		Eigen::Vector3d(100, 100, 100),
 		Eigen::Vector3d(0, 0, 0),
 		0
 	);
 
-	scene.addObject(sky);
-	scene.addObject(grass);
+	/* Pinheiros */
 
 	Object* pineLog1 = new Cilinder
 	(
@@ -93,12 +102,7 @@
 		0
 	);
 
-	scene.addObject(pineLog1);
-	scene.addObject(pineLeaves1);
-	scene.addObject(pineLog2);
-	scene.addObject(pineLeaves2);
-	scene.addObject(pineLog3);
-	scene.addObject(pineLeaves3);
+	/* Carvalhos */
 
 	Object* oakLog1 = new Cilinder
 	(
@@ -116,8 +120,8 @@
 	(
 		30,
 		Eigen::Vector3d(130, -30, -230),
-		Eigen::Vector3d(10, 156, 53),
-		Eigen::Vector3d(10, 156, 53),
+		Eigen::Vector3d(255, 255, 255),
+		Eigen::Vector3d(255, 255, 255),
 		Eigen::Vector3d(0, 0, 0),
 		0
 	);
@@ -126,8 +130,8 @@
 	(
 		22,
 		Eigen::Vector3d(130, 0, -230),
-		Eigen::Vector3d(10, 156, 53),
-		Eigen::Vector3d(10, 156, 53),
+		Eigen::Vector3d(255, 255, 255),
+		Eigen::Vector3d(255, 255, 255),
 		Eigen::Vector3d(0, 0, 0),
 		0
 	);
@@ -148,8 +152,8 @@
 	(
 		30,
 		Eigen::Vector3d(130, -30, -300),
-		Eigen::Vector3d(10, 156, 53),
-		Eigen::Vector3d(10, 156, 53),
+		Eigen::Vector3d(255, 255, 255),
+		Eigen::Vector3d(255, 255, 255),
 		Eigen::Vector3d(0, 0, 0),
 		0
 	);
@@ -158,8 +162,8 @@
 	(
 		22,
 		Eigen::Vector3d(130, 0, -300),
-		Eigen::Vector3d(10, 156, 53),
-		Eigen::Vector3d(10, 156, 53),
+		Eigen::Vector3d(255, 255, 255),
+		Eigen::Vector3d(255, 255, 255),
 		Eigen::Vector3d(0, 0, 0),
 		0
 	);
@@ -180,8 +184,8 @@
 	(
 		30,
 		Eigen::Vector3d(130, -30, -160),
-		Eigen::Vector3d(10, 156, 53),
-		Eigen::Vector3d(10, 156, 53),
+		Eigen::Vector3d(255, 255, 255),
+		Eigen::Vector3d(255, 255, 255),
 		Eigen::Vector3d(0, 0, 0),
 		0
 	);
@@ -190,21 +194,13 @@
 	(
 		22,
 		Eigen::Vector3d(130, 0, -160),
-		Eigen::Vector3d(10, 156, 53),
-		Eigen::Vector3d(10, 156, 53),
+		Eigen::Vector3d(255, 255, 255),
+		Eigen::Vector3d(255, 255, 255),
 		Eigen::Vector3d(0, 0, 0),
 		0
 	);
 
-	scene.addObject(oakLog1);
-	scene.addObject(oakLeavesBottom1);
-	scene.addObject(oakLeavesTop1);
-	scene.addObject(oakLog2);
-	scene.addObject(oakLeavesBottom2);
-	scene.addObject(oakLeavesTop2);
-	scene.addObject(oakLog3);
-	scene.addObject(oakLeavesBottom3);
-	scene.addObject(oakLeavesTop3);
+	/* Mesa */
 
 	Object* table = new Cube
 	(
@@ -307,8 +303,123 @@
 	leg3HitBox->addObject(leg3);
 	leg4HitBox->addObject(leg4);
 
+	/* Roger */
+
+	Object* rogerBody = new Sphere
+	(
+		30,
+		Eigen::Vector3d(0, -70, -380),
+		Eigen::Vector3d(255, 255, 255),
+		Eigen::Vector3d(255, 255, 255),
+		Eigen::Vector3d(0, 0, 0),
+		0
+	);
+
+	Object* rogerHead = new Sphere
+	(
+		20,
+		Eigen::Vector3d(0, -30, -380),
+		Eigen::Vector3d(255, 255, 255),
+		Eigen::Vector3d(255, 255, 255),
+		Eigen::Vector3d(0, 0, 0),
+		0
+	);
+
+	Object* rogerLeftEye = new Sphere
+	(
+		5,
+		Eigen::Vector3d(-10, -20, -365),
+		Eigen::Vector3d(50, 31, 20),
+		Eigen::Vector3d(50, 31, 20),
+		Eigen::Vector3d(0, 0, 0),
+		0
+	);
+
+	Object* rogerRightEye = new Sphere
+	(
+		5,
+		Eigen::Vector3d(10, -20, -365),
+		Eigen::Vector3d(50, 31, 20),
+		Eigen::Vector3d(50, 31, 20),
+		Eigen::Vector3d(0, 0, 0),
+		0
+	);
+
+	/* Botões */
+
+	Object* springButton = new Sphere
+	(
+		10,
+		Eigen::Vector3d(-40, -60, -230),
+		Eigen::Vector3d(255, 72, 132),
+		Eigen::Vector3d(255, 72, 132),
+		Eigen::Vector3d(40, 40, 40),
+		6
+	);
+
+	Object* summerButton = new Sphere
+	(
+		10,
+		Eigen::Vector3d(-13.3, -60, -230),
+		Eigen::Vector3d(12, 242, 0),
+		Eigen::Vector3d(12, 242, 0),
+		Eigen::Vector3d(40, 40, 40),
+		6
+	);
+
+	Object* autumnButton = new Sphere
+	(
+		10,
+		Eigen::Vector3d(13.3, -60, -230),
+		Eigen::Vector3d(240, 104, 4),
+		Eigen::Vector3d(240, 104, 4),
+		Eigen::Vector3d(40, 40, 40),
+		6
+	);
+
+	Object* winterButton = new Sphere
+	(
+		10,
+		Eigen::Vector3d(40, -60, -230),
+		Eigen::Vector3d(44, 157, 201),
+		Eigen::Vector3d(44, 157, 201),
+		Eigen::Vector3d(40, 40, 40),
+		6
+	);
+
+	
+	scene.addObject(sky);
+	scene.addObject(grass);
+
+	scene.addObject(pineLeaves1);
+	scene.addObject(pineLeaves2);
+	scene.addObject(pineLeaves3);
+	scene.addObject(pineLog1);
+	scene.addObject(pineLog2);
+	scene.addObject(pineLog3);
+	
+	scene.addObject(oakLeavesBottom1);
+	scene.addObject(oakLeavesBottom2);
+	scene.addObject(oakLeavesBottom3);
+	scene.addObject(oakLeavesTop1);
+	scene.addObject(oakLeavesTop2);
+	scene.addObject(oakLeavesTop3);
+	scene.addObject(oakLog1);
+	scene.addObject(oakLog2);
+	scene.addObject(oakLog3);
+	
 	scene.addHitBox(tableHitBox);
 	scene.addHitBox(leg1HitBox);
 	scene.addHitBox(leg2HitBox);
 	scene.addHitBox(leg3HitBox);
 	scene.addHitBox(leg4HitBox);
+	
+	scene.addObject(rogerBody);
+	scene.addObject(rogerHead);
+	scene.addObject(rogerLeftEye);
+	scene.addObject(rogerRightEye);
+	
+	scene.addObject(springButton);
+	scene.addObject(summerButton);
+	scene.addObject(autumnButton);
+	scene.addObject(winterButton);

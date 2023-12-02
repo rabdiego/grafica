@@ -15,6 +15,12 @@ void Scene::addHitBox(HitBox* hitbox)
 	this->hitboxes.push_back(hitbox);
 }
 
+void Scene::cleanObjects()
+{
+	this->objects.clear();
+	this->hitboxes.clear();
+}
+
 int Scene::getNumElements()
 {
 	return (this->objects).size();
