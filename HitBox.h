@@ -22,6 +22,7 @@ public:
 
 	HitBox(double radius, Eigen::Vector3d centerBase, Eigen::Vector3d centerTop);
 	void addObject(Object* object);
+	void convertToCamera(Eigen::Matrix4d transformationMatrix);
 	bool hasInterceptedRay(Ray ray);
 	int getNumElements();
 };

@@ -17,56 +17,66 @@ void PontualSource::computeIntensity(Eigen::Vector3d pInt, Ray ray, Eigen::Vecto
 	if (shadowed == false)
 	{
 		Eigen::Vector3d directionToSource = (this->origin - pInt).normalized();
-
-		Eigen::Vector3d directionToSourceReflex = (2 * directionToSource.dot(normal) * normal) - directionToSource;
-		Eigen::Vector3d rayDirectionReflex = ray.direction;
-
-		Eigen::Vector3d tempDifuse = ((this->intensity).cwiseProduct(kDif)) * normal.dot(directionToSource);
-		double lr = directionToSourceReflex.dot(rayDirectionReflex);
-
-		Eigen::Vector3d tempSpecular;
-
-		if (lr >= 0)
+		if (directionToSource.dot(normal) > 0)
 		{
-			tempSpecular = ((this->intensity).cwiseProduct(kEsp)) * pow(directionToSourceReflex.dot(rayDirectionReflex), specularIndex);
-		}
-		else
-		{
-			tempSpecular = Eigen::Vector3d(0, 0, 0);
-		}
-		
-		// Monkey code
+			Eigen::Vector3d directionToSourceReflex = (2 * directionToSource.dot(normal) * normal) - directionToSource;
+			Eigen::Vector3d rayDirectionReflex = ray.direction;
 
-		Eigen::Vector3d intesityDifuse = *ptrIntesityDifuse;
-		Eigen::Vector3d intesitySpecular = *ptrIntesitySpecular;
+			Eigen::Vector3d tempDifuse = ((this->intensity).cwiseProduct(kDif)) * normal.dot(directionToSource);
+			double lr = directionToSourceReflex.dot(rayDirectionReflex);
 
-		if (tempDifuse[0] > 0)
-		{
-			intesityDifuse[0] += tempDifuse[0];
-		}
-		if (tempDifuse[1] > 0)
-		{
-			intesityDifuse[1] += tempDifuse[1];
-		}
-		if (tempDifuse[2] > 0)
-		{
-			intesityDifuse[2] += tempDifuse[2];
-		}
+			Eigen::Vector3d tempSpecular;
 
-		if (tempSpecular[0] > 0)
-		{
-			intesitySpecular[0] += tempSpecular[0];
-		}
-		if (tempSpecular[1] > 0)
-		{
-			intesitySpecular[1] += tempSpecular[1];
-		}
-		if (tempSpecular[2] > 0)
-		{
-			intesitySpecular[2] += tempSpecular[2];
-		}
+			if (lr >= 0)
+			{
+				tempSpecular = ((this->intensity).cwiseProduct(kEsp)) * pow(directionToSourceReflex.dot(rayDirectionReflex), specularIndex);
+			}
+			else
+			{
+				tempSpecular = Eigen::Vector3d(0, 0, 0);
+			}
 
-		*ptrIntesityDifuse = intesityDifuse;
-		*ptrIntesitySpecular = intesitySpecular;
+			// Monkey code
+
+			Eigen::Vector3d intesityDifuse = *ptrIntesityDifuse;
+			Eigen::Vector3d intesitySpecular = *ptrIntesitySpecular;
+
+			if (tempDifuse[0] > 0)
+			{
+				intesityDifuse[0] += tempDifuse[0];
+			}
+			if (tempDifuse[1] > 0)
+			{
+				intesityDifuse[1] += tempDifuse[1];
+			}
+			if (tempDifuse[2] > 0)
+			{
+				intesityDifuse[2] += tempDifuse[2];
+			}
+
+			if (tempSpecular[0] > 0)
+			{
+				intesitySpecular[0] += tempSpecular[0];
+			}
+			if (tempSpecular[1] > 0)
+			{
+				intesitySpecular[1] += tempSpecular[1];
+			}
+			if (tempSpecular[2] > 0)
+			{
+				intesitySpecular[2] += tempSpecular[2];
+			}
+
+			*ptrIntesityDifuse = intesityDifuse;
+			*ptrIntesitySpecular = intesitySpecular;
+		}
 	}
+}
+
+void PontualSource::convertToCamera(Eigen::Matrix4d transformationMatrix)
+{
+	Eigen::Vector4d origin4;
+	origin4 << origin[0], origin[1], origin[2], 1;
+	origin4 = transformationMatrix * origin4;
+	origin << origin4[0], origin4[1], origin4[2];
 }

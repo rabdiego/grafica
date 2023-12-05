@@ -16,7 +16,7 @@ Canvas::Canvas(double windowDistance, double windowWidth, double windowHeight, d
 	this->jYMax = windowHeight / 2;  // half_h
 }
 
-Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene)
+Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene, bool toCamera)
 {
 	/*
 	Método para desenhar os objetos do cenário na tela
@@ -26,6 +26,11 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene)
 	int numObjects = scene.getNumElements(), numHitBoxes = scene.getNumHitBoxes();
 	Eigen::Vector3d pJ;
 	int numObjectsVector = numObjects;
+
+	if (toCamera)
+	{
+		scene.convertObjectsToCamera(true);
+	}
 
 	for (int i = 0; i < numHitBoxes; i++)
 	{

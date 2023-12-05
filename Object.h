@@ -23,6 +23,7 @@ public:
 	virtual void rotateX(double angle) = 0;
 	virtual void rotateY(double angle) = 0;
 	virtual void rotateZ(double angle) = 0;
+	virtual void convertToCamera(Eigen::Matrix4d transformationMatrix) = 0;
 };
 
 #endif

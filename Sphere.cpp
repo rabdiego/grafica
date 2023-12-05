@@ -86,3 +86,13 @@ void  Sphere::rotateZ(double angle)
 {
 
 }
+
+void Sphere::convertToCamera(Eigen::Matrix4d transformationMatrix)
+{
+	Eigen::Vector4d center4;
+	center4 << this->center[0], this->center[1], this->center[2], 1;
+
+	center4 = transformationMatrix * center4;
+
+	this->center << center4[0], center4[1], center4[2];
+}

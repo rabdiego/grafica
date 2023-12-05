@@ -36,3 +36,8 @@ void AmbientSource::computeIntensity(Eigen::Vector3d pInt, Ray ray, Eigen::Vecto
 
 	*ptrIntesityAmbient = intesityAmbient;
 }
+
+void AmbientSource::convertToCamera(Eigen::Matrix4d transformationMatrix)
+{
+
+}

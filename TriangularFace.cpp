@@ -196,3 +196,18 @@ void TriangularFace::rotateZ(double angle)
 	this->r2 = this->vertexes[2] - this->vertexes[1];
 	this->normal = (r2.cross(r1)).normalized();
 }
+
+void TriangularFace::convertToCamera(Eigen::Matrix4d transformationMatrix)
+{
+	Eigen::Vector4d vertexes4[3];
+	for (int i = 0; i < 3; i++)
+	{
+		vertexes4[i] << vertexes[i][0], vertexes[i][1], vertexes[i][2], 1;
+		vertexes4[i] = transformationMatrix * vertexes4[i];
+		vertexes[i] << vertexes4[i][0], vertexes4[i][1], vertexes4[i][2];
+	}
+
+	this->r1 = this->vertexes[1] - this->vertexes[0];
+	this->r2 = this->vertexes[2] - this->vertexes[1];
+	this->normal = (r2.cross(r1)).normalized();
+}

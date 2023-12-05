@@ -82,3 +82,16 @@ void  CircularPlane::rotateZ(double angle)
 {
 
 }
+
+void CircularPlane::convertToCamera(Eigen::Matrix4d transformationMatrix)
+{
+	Eigen::Vector4d center4, normal4;
+	center4 << this->center[0], this->center[1], this->center[2], 1;
+	normal4 << this->normal[0], this->normal[1], this->normal[2], 0;
+
+	center4 = transformationMatrix * center4;
+	normal4 = transformationMatrix * normal4;
+
+	this->center << center4[0], center4[1], center4[2];
+	this->normal << normal4[0], normal4[1], normal4[2];
+}

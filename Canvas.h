@@ -24,7 +24,7 @@ public:
 	double jYMax;
 
 	Canvas(double windowDistance, double windowWidth, double windowHeight, double numLines, double numColumns);
-	Tensor raycast(Eigen::Vector3d observable, Scene scene);
+	Tensor raycast(Eigen::Vector3d observable, Scene scene, bool toCamera);
 };
 
 #endif

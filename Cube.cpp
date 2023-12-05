@@ -323,3 +323,11 @@ void Cube::rotateZ(double angle)
 		);
 	}
 }
+
+void Cube::convertToCamera(Eigen::Matrix4d transformationMatrix)
+{
+	for (int i = 0; i < 12; i++)
+	{
+		faces[i]->convertToCamera(transformationMatrix);
+	}
+}

@@ -6,6 +6,7 @@
 
 // Estrutura de dados
 #include "AmbientSource.h"
+#include "Camera.h"
 #include "Canvas.h"
 #include "Cilinder.h"
 #include "Cone.h"
@@ -69,6 +70,13 @@ int main(int argc, char* argv[])
 	// Canvas e cena
 	Canvas canvas(windowDistance, windowWidth, windowHeight, numLines, numColumns);
 	Scene scene;
+	Camera* camera = new Camera
+	(
+		Eigen::Vector3d(0, -20, -350),
+		Eigen::Vector3d(0, -20, 0),
+		Eigen::Vector3d(0, 1, 0)
+	);
+	scene.setCamera(camera);
 
 	// Texturas
 
@@ -83,6 +91,39 @@ int main(int argc, char* argv[])
 		NULL,
 		Eigen::Vector3d(0, 0, 1),
 		Eigen::Vector3d(0, 0, -1000),
+		Eigen::Vector3d(32, 116, 219),
+		Eigen::Vector3d(32, 116, 219),
+		Eigen::Vector3d(0, 0, 0),
+		0
+	);
+
+	Object* skyLeft = new Plane
+	(
+		NULL,
+		Eigen::Vector3d(1, 0, 0),
+		Eigen::Vector3d(-1000, 0, 0),
+		Eigen::Vector3d(32, 116, 219),
+		Eigen::Vector3d(32, 116, 219),
+		Eigen::Vector3d(0, 0, 0),
+		0
+	);
+
+	Object* skyRight = new Plane
+	(
+		NULL,
+		Eigen::Vector3d(-1, 0, 0),
+		Eigen::Vector3d(1000, 0, 0),
+		Eigen::Vector3d(32, 116, 219),
+		Eigen::Vector3d(32, 116, 219),
+		Eigen::Vector3d(0, 0, 0),
+		0
+	);
+
+	Object* skyTop = new Plane
+	(
+		NULL,
+		Eigen::Vector3d(0, -1, 0),
+		Eigen::Vector3d(0, 1000, 0),
 		Eigen::Vector3d(32, 116, 219),
 		Eigen::Vector3d(32, 116, 219),
 		Eigen::Vector3d(0, 0, 0),
@@ -458,12 +499,15 @@ int main(int argc, char* argv[])
 		Eigen::Vector3d(40, 40, 40),
 		6
 	);
-	scene.addObject(oakLeavesBottom2);
 	
 	scene.addObject(sky);
+	scene.addObject(skyLeft);
+	scene.addObject(skyRight);
+	scene.addObject(skyTop);
 	scene.addObject(grass);
-
+	
 	scene.addObject(pineLeaves1);
+	
 	scene.addObject(pineLeaves2);
 	scene.addObject(pineLeaves3);
 	scene.addObject(pineLog1);
@@ -479,7 +523,7 @@ int main(int argc, char* argv[])
 	scene.addObject(oakLog1);
 	scene.addObject(oakLog2);
 	scene.addObject(oakLog3);
-
+	
 	scene.addHitBox(tableHitBox);
 	scene.addHitBox(leg1HitBox);
 	scene.addHitBox(leg2HitBox);
@@ -495,7 +539,7 @@ int main(int argc, char* argv[])
 	scene.addObject(summerButton);
 	scene.addObject(autumnButton);
 	scene.addObject(winterButton);
-
+	
 	Eigen::Vector3d pontualIntensity(0.7, 0.7, 0.7);
 	Eigen::Vector3d pontualOrigin(-30, 60, 0);
 	LightSource* pontual = new PontualSource(pontualOrigin, pontualIntensity);
@@ -509,7 +553,7 @@ int main(int argc, char* argv[])
 	// Display
 	std::cout << "Renderização iniciada.\n";
 	time_t startTime = time(NULL);
-	Tensor display = canvas.raycast(origin, scene);
+	Tensor display = canvas.raycast(origin, scene, true);
 	time_t renderTime = time(NULL);
 	std::cout << "Tempo para renderizar objetos: " << renderTime - startTime << std::endl;
 	display.normalize();
@@ -619,8 +663,19 @@ int main(int argc, char* argv[])
 							0
 						);
 
-						scene.addObject(sky);
 						scene.addObject(grass);
+						scene.addObject(oakLeavesBottom1);
+						scene.addObject(oakLeavesBottom2);
+						scene.addObject(oakLeavesBottom3);
+						scene.addObject(oakLeavesTop1);
+						scene.addObject(oakLeavesTop2);
+						scene.addObject(oakLeavesTop3);
+						scene.convertObjectsToCamera(false);
+
+						scene.addObject(sky);
+						scene.addObject(skyLeft);
+						scene.addObject(skyRight);
+						scene.addObject(skyTop);
 
 						scene.addObject(pineLeaves1);
 						scene.addObject(pineLeaves2);
@@ -629,12 +684,6 @@ int main(int argc, char* argv[])
 						scene.addObject(pineLog2);
 						scene.addObject(pineLog3);
 
-						scene.addObject(oakLeavesBottom1);
-						scene.addObject(oakLeavesBottom2);
-						scene.addObject(oakLeavesBottom3);
-						scene.addObject(oakLeavesTop1);
-						scene.addObject(oakLeavesTop2);
-						scene.addObject(oakLeavesTop3);
 						scene.addObject(oakLog1);
 						scene.addObject(oakLog2);
 						scene.addObject(oakLog3);
@@ -652,7 +701,7 @@ int main(int argc, char* argv[])
 
 						std::cout << "Primavera iniciada\n";
 						startTime = time(NULL);
-						display = canvas.raycast(origin, scene);
+						display = canvas.raycast(origin, scene, false);
 						renderTime = time(NULL);
 						std::cout << "Tempo para renderizar objetos: " << renderTime - startTime << std::endl;
 						display.normalize();
@@ -740,8 +789,19 @@ int main(int argc, char* argv[])
 							0
 						);
 
-						scene.addObject(sky);
 						scene.addObject(grass);
+						scene.addObject(oakLeavesBottom1);
+						scene.addObject(oakLeavesBottom2);
+						scene.addObject(oakLeavesBottom3);
+						scene.addObject(oakLeavesTop1);
+						scene.addObject(oakLeavesTop2);
+						scene.addObject(oakLeavesTop3);
+						scene.convertObjectsToCamera(false);
+
+						scene.addObject(sky);
+						scene.addObject(skyLeft);
+						scene.addObject(skyRight);
+						scene.addObject(skyTop);
 
 						scene.addObject(pineLeaves1);
 						scene.addObject(pineLeaves2);
@@ -750,12 +810,6 @@ int main(int argc, char* argv[])
 						scene.addObject(pineLog2);
 						scene.addObject(pineLog3);
 
-						scene.addObject(oakLeavesBottom1);
-						scene.addObject(oakLeavesBottom2);
-						scene.addObject(oakLeavesBottom3);
-						scene.addObject(oakLeavesTop1);
-						scene.addObject(oakLeavesTop2);
-						scene.addObject(oakLeavesTop3);
 						scene.addObject(oakLog1);
 						scene.addObject(oakLog2);
 						scene.addObject(oakLog3);
@@ -773,7 +827,7 @@ int main(int argc, char* argv[])
 
 						std::cout << "Verão iniciado\n";
 						startTime = time(NULL);
-						display = canvas.raycast(origin, scene);
+						display = canvas.raycast(origin, scene, false);
 						renderTime = time(NULL);
 						std::cout << "Tempo para renderizar objetos: " << renderTime - startTime << std::endl;
 						display.normalize();
@@ -861,8 +915,19 @@ int main(int argc, char* argv[])
 							0
 						);
 
-						scene.addObject(sky);
 						scene.addObject(grass);
+						scene.addObject(oakLeavesBottom1);
+						scene.addObject(oakLeavesBottom2);
+						scene.addObject(oakLeavesBottom3);
+						scene.addObject(oakLeavesTop1);
+						scene.addObject(oakLeavesTop2);
+						scene.addObject(oakLeavesTop3);
+						scene.convertObjectsToCamera(false);
+
+						scene.addObject(sky);
+						scene.addObject(skyLeft);
+						scene.addObject(skyRight);
+						scene.addObject(skyTop);
 
 						scene.addObject(pineLeaves1);
 						scene.addObject(pineLeaves2);
@@ -871,12 +936,6 @@ int main(int argc, char* argv[])
 						scene.addObject(pineLog2);
 						scene.addObject(pineLog3);
 
-						scene.addObject(oakLeavesBottom1);
-						scene.addObject(oakLeavesBottom2);
-						scene.addObject(oakLeavesBottom3);
-						scene.addObject(oakLeavesTop1);
-						scene.addObject(oakLeavesTop2);
-						scene.addObject(oakLeavesTop3);
 						scene.addObject(oakLog1);
 						scene.addObject(oakLog2);
 						scene.addObject(oakLog3);
@@ -894,7 +953,7 @@ int main(int argc, char* argv[])
 
 						std::cout << "Outono iniciado\n";
 						startTime = time(NULL);
-						display = canvas.raycast(origin, scene);
+						display = canvas.raycast(origin, scene, false);
 						renderTime = time(NULL);
 						std::cout << "Tempo para renderizar objetos: " << renderTime - startTime << std::endl;
 						display.normalize();
@@ -982,8 +1041,25 @@ int main(int argc, char* argv[])
 							0
 						);
 
-						scene.addObject(sky);
 						scene.addObject(grass);
+						scene.addObject(oakLeavesBottom1);
+						scene.addObject(oakLeavesBottom2);
+						scene.addObject(oakLeavesBottom3);
+						scene.addObject(oakLeavesTop1);
+						scene.addObject(oakLeavesTop2);
+						scene.addObject(oakLeavesTop3);
+
+						scene.addObject(rogerBody);
+						scene.addObject(rogerHead);
+						scene.addObject(rogerLeftEye);
+						scene.addObject(rogerRightEye);
+
+						scene.convertObjectsToCamera(false);
+
+						scene.addObject(sky);
+						scene.addObject(skyLeft);
+						scene.addObject(skyRight);
+						scene.addObject(skyTop);
 
 						scene.addObject(pineLeaves1);
 						scene.addObject(pineLeaves2);
@@ -992,12 +1068,6 @@ int main(int argc, char* argv[])
 						scene.addObject(pineLog2);
 						scene.addObject(pineLog3);
 
-						scene.addObject(oakLeavesBottom1);
-						scene.addObject(oakLeavesBottom2);
-						scene.addObject(oakLeavesBottom3);
-						scene.addObject(oakLeavesTop1);
-						scene.addObject(oakLeavesTop2);
-						scene.addObject(oakLeavesTop3);
 						scene.addObject(oakLog1);
 						scene.addObject(oakLog2);
 						scene.addObject(oakLog3);
@@ -1008,11 +1078,6 @@ int main(int argc, char* argv[])
 						scene.addHitBox(leg3HitBox);
 						scene.addHitBox(leg4HitBox);
 
-						scene.addObject(rogerBody);
-						scene.addObject(rogerHead);
-						scene.addObject(rogerLeftEye);
-						scene.addObject(rogerRightEye);
-
 						scene.addObject(springButton);
 						scene.addObject(summerButton);
 						scene.addObject(autumnButton);
@@ -1020,7 +1085,7 @@ int main(int argc, char* argv[])
 
 						std::cout << "Inverno iniciado\n";
 						startTime = time(NULL);
-						display = canvas.raycast(origin, scene);
+						display = canvas.raycast(origin, scene, false);
 						renderTime = time(NULL);
 						std::cout << "Tempo para renderizar objetos: " << renderTime - startTime << std::endl;
 						display.normalize();

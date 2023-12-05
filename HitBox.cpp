@@ -71,3 +71,25 @@ bool HitBox::hasInterceptedRay(Ray ray)
 
 	return false;
 }
+
+void HitBox::convertToCamera(Eigen::Matrix4d transformationMatrix)
+{
+	Eigen::Vector4d centerTop4;
+	Eigen::Vector4d centerBase4;
+
+	centerTop4 << this->centerTop[0], this->centerTop[1], this->centerTop[2], 1;
+	centerBase4 << this->centerBase[0], this->centerBase[1], this->centerBase[2], 1;
+
+	centerTop4 = transformationMatrix * centerTop4;
+	centerBase4 = transformationMatrix * centerBase4;
+
+	this->centerTop << centerTop4[0], centerTop4[1], centerTop4[2];
+	this->centerBase << centerBase4[0], centerBase4[1], centerBase4[2];
+
+	this->direction = (this->centerTop - this->centerBase).normalized();
+
+	for (auto& o : this->objects)
+	{
+		o->convertToCamera(transformationMatrix);
+	}
+}

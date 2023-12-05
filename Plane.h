@@ -24,6 +24,7 @@ public:
 	void rotateX(double angle);
 	void rotateY(double angle);
 	void rotateZ(double angle);
+	void convertToCamera(Eigen::Matrix4d transformationMatrix);
 };
 
 #endif
