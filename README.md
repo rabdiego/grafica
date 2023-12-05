@@ -5,6 +5,7 @@ Linguagem: **C++**
 | --- | --- |
 | 10:00 - 12:00 | 10:00 - 12:00 |
 
+![image](screenshot.png)
 
 $$I_{d} = cos(\vec{l}, \vec{n})(I_{F}@k_{d})$$
 
