@@ -2,6 +2,14 @@
 #include <iostream>
 #include <cmath>
 
+/**
+ * Retorna a cor de um pixel específico em uma superfície SDL(Textura).
+ *
+ * @param pSurface A superfície SDL da qual obter a cor do pixel.
+ * @param X A coordenada X do pixel.
+ * @param Y A coordenada Y do pixel.
+ * @return A cor do pixel na forma de uma estrutura SDL_Color.
+ */
 SDL_Color GetPixelColor(const SDL_Surface* pSurface, const int X, const int Y)
 {
 	// Bytes per pixel
@@ -25,6 +33,17 @@ SDL_Color GetPixelColor(const SDL_Surface* pSurface, const int X, const int Y)
 	return Color;
 }
 
+/**
+ * @brief Construtor da classe Plane.
+ * 
+ * @param texture Superfície SDL que representa a textura do plano.
+ * @param normal Vetor 3D que representa a normal do plano.
+ * @param center Vetor 3D que representa o centro do plano.
+ * @param kAmbient Vetor 3D que representa o coeficiente de reflexão ambiente do plano.
+ * @param kDif Vetor 3D que representa o coeficiente de reflexão difusa do plano.
+ * @param kEsp Vetor 3D que representa o coeficiente de reflexão especular do plano.
+ * @param specularIndex Índice de especularidade do plano.
+ */
 Plane::Plane(SDL_Surface* texture, Eigen::Vector3d normal, Eigen::Vector3d center, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, double specularIndex)
 {
 	this->texture = texture;
@@ -63,6 +82,11 @@ Plane::Plane(SDL_Surface* texture, Eigen::Vector3d normal, Eigen::Vector3d cente
 	this->axis2 = (normal.cross(this->axis1)).normalized();
 }
 
+/**
+ * @brief Verifica se um raio intercepta o plano.
+ *
+ * @param ray Raio a ser verificado.
+ */
 double Plane::hasInterceptedRay(Ray ray)
 {
 	Eigen::Vector3d w = ray.initialPoint - this->center;
@@ -74,6 +98,16 @@ double Plane::hasInterceptedRay(Ray ray)
 	return 1;
 }
 
+
+/**
+ * @brief Calcula a cor do plano no ponto de interseção com um raio.
+ *
+ * @param tInt Valor do parâmetro t no ponto de interseção.
+ * @param ray Raio de interseção.
+ * @param sources Vetor de fontes de luz.
+ * @param shadows Vetor de booleanos indicando se há sombra no ponto de interseção.
+ * @return Cor do plano no ponto de interseção.
+ */
 Eigen::Vector3d Plane::computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows)
 {
 	Eigen::Vector3d intesityEye(0, 0, 0);
