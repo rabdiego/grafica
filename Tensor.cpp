@@ -1,5 +1,7 @@
 #include "Tensor.h"
 
+
+// Construtor da classe Tensor.
 Tensor::Tensor(int numColumns, int numLines)
 {
 	this->numLines = numLines;
@@ -10,12 +12,13 @@ Tensor::Tensor(int numColumns, int numLines)
 	this->blue = Eigen::ArrayXXd::Zero(this->numLines, this->numColumns);
 }
 
+// Normaliza os valores das matrizes de cores.
 void Tensor::normalize()
 {
 	/*
 	Como nada garante que o resultado do raycast
 	com cor retorna valores entre 0 e 255,
-	desenvolvi essa função para
+	desenvolvi essa funï¿½ï¿½o para
 	normalizar as matrizes nesse intervalo.
 	*/
 	double  maximum = this->red(0, 0);

@@ -1,5 +1,6 @@
 #include "Sphere.h"
 
+// Construtor da classe Sphere.
 Sphere::Sphere(double radius, Eigen::Vector3d center, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
 {
 	this->radius = radius;
@@ -10,6 +11,7 @@ Sphere::Sphere(double radius, Eigen::Vector3d center, Eigen::Vector3d kAmbient, 
 	this->specularIndex = specularIndex;
 }
 
+// Verifica se um raio intercepta a esfera.
 double Sphere::hasInterceptedRay(Ray ray)
 {
 	Eigen::Vector3d w = ray.initialPoint - this->center;
@@ -25,6 +27,7 @@ double Sphere::hasInterceptedRay(Ray ray)
 	return 1;
 }
 
+// Calcula a cor do ponto de interseção da esfera.
 Eigen::Vector3d Sphere::computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows)
 {
 	Eigen::Vector3d pInt(0, 0, 0);
@@ -51,6 +54,7 @@ Eigen::Vector3d Sphere::computeColor(double tInt, Ray ray, std::vector<LightSour
 	return intesityEye;
 }
 
+// Translada a esfera nas direções x, y e z.
 void Sphere::translate(double x, double y, double z)
 {
 	Eigen::Matrix4d m;
@@ -67,26 +71,31 @@ void Sphere::translate(double x, double y, double z)
 	this->center << center4[0], center4[1], center4[2];
 }
 
+// Escala a esfera nas direções x, y e z.
 void  Sphere::scale(double x, double y, double z)
 {
 	this->radius *= x;
 }
 
+// Rotaciona a esfera em torno do eixo x.
 void  Sphere::rotateX(double angle)
 {
 
 }
 
+// Rotaciona a esfera em torno do eixo y.
 void  Sphere::rotateY(double angle)
 {
 
 }
 
+// Rotaciona a esfera em torno do eixo z.
 void  Sphere::rotateZ(double angle)
 {
 
 }
 
+// Converte a esfera para o sistema de coordenadas da câmera.
 void Sphere::convertToCamera(Eigen::Matrix4d transformationMatrix)
 {
 	Eigen::Vector4d center4;
