@@ -1,6 +1,13 @@
 #include <vector>
 #include "HitBox.h"
 
+/**
+ * @brief Construtor da classe HitBox.
+ * 
+ * @param radius O raio da HitBox.
+ * @param centerBase O centro da base da HitBox.
+ * @param centerTop O centro do topo da HitBox.
+ */
 HitBox::HitBox(double radius, Eigen::Vector3d centerBase, Eigen::Vector3d centerTop)
 {
 	this->radius = radius;
@@ -10,16 +17,31 @@ HitBox::HitBox(double radius, Eigen::Vector3d centerBase, Eigen::Vector3d center
 	this->height = (centerTop - centerBase).norm();
 }
 
+/**
+ * @brief Adiciona um objeto à HitBox.
+ *
+ * @param object O objeto a ser adicionado.
+ */
 void HitBox::addObject(Object* object)
 {
 	this->objects.push_back(object);
 }
 
+
+/**
+ * @brief Obtém o número de elementos na HitBox.
+ */
 int HitBox::getNumElements()
 {
 	return (this->objects).size();
 }
 
+
+/**
+ * @brief Verifica se um raio interceptou a HitBox.
+ *
+ * @param ray O raio a ser verificado.
+ */
 bool HitBox::hasInterceptedRay(Ray ray)
 {
 	Eigen::Vector3d w = ray.initialPoint - this->centerBase;
@@ -72,6 +94,12 @@ bool HitBox::hasInterceptedRay(Ray ray)
 	return false;
 }
 
+
+/**
+ * @brief Converte a HitBox para o sistema de coordenadas da câmera.
+ *
+ * @param transformationMatrix A matriz de transformação para o sistema de coordenadas da câmera.
+ */
 void HitBox::convertToCamera(Eigen::Matrix4d transformationMatrix)
 {
 	Eigen::Vector4d centerTop4;

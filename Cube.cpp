@@ -1,31 +1,19 @@
-/*
-#include "TriangularFace.h"
-
-#ifndef Cube_H
-#define Cube_H
-
-class Cube : public Object
-{
-public:
-	TriangularFace faces[12];
-
-	Cube(Eigen::Vector3d mainVertex, double height, double width, double depth, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex);
-	double hasInterceptedRay(Ray ray);
-	Eigen::Vector3d computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows);
-
-	void translate(double x, double y, double z);
-	void scale(double x, double y, double z);
-	void rotateX(double angle);
-	void rotateY(double angle);
-	void rotateZ(double angle);
-};
-
-#endif
-*/
-
 #include <iostream>
 #include "Cube.h"
 
+/**
+ * Construtor da classe Cube.
+ * Cria um objeto Cube com base nos parâmetros fornecidos.
+ *
+ * @param mainVertex O vértice principal do cubo.
+ * @param width A largura do cubo.
+ * @param height A altura do cubo.
+ * @param depth A profundidade do cubo.
+ * @param kAmbient O coeficiente de reflexão ambiente do cubo.
+ * @param kDif O coeficiente de reflexão difusa do cubo.
+ * @param kEsp O coeficiente de reflexão especular do cubo.
+ * @param specularIndex O índice de especularidade do cubo.
+ */
 Cube::Cube(Eigen::Vector3d mainVertex, double width, double height, double depth, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
 {
 	this->structure = 0;
@@ -190,6 +178,12 @@ Cube::Cube(Eigen::Vector3d mainVertex, double width, double height, double depth
 	);
 }
 
+/**
+ * Verifica se o cubo intercepta um raio e retorna a distância do ponto de interseção mais próximo.
+ * 
+ * @param ray O raio a ser verificado.
+ * @return A distância do ponto de interseção mais próximo ou 1 se não houver interseção.
+ */
 double Cube::hasInterceptedRay(Ray ray)
 {
 	double distances[12];
@@ -218,11 +212,27 @@ double Cube::hasInterceptedRay(Ray ray)
 	return 1;
 }
 
+/**
+ * Calcula a cor do cubo.
+ * 
+ * @param tInt O valor de t da interseção.
+ * @param ray O raio de luz.
+ * @param sources Um vetor de fontes de luz.
+ * @param shadows Um vetor de booleanos indicando se há sombras.
+ * @return A cor calculada.
+ */
 Eigen::Vector3d Cube::computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows)
 {
 	return faces[structure]->computeColor(tInt, ray, sources, shadows);
 }
 
+/**
+ * Translada o cubo nas coordenadas especificadas.
+ * 
+ * @param x A coordenada x para a translação.
+ * @param y A coordenada y para a translação.
+ * @param z A coordenada z para a translação.
+ */
 void Cube::translate(double x, double y, double z)
 {
 	for (int i = 0; i < 12; i++)
@@ -231,6 +241,13 @@ void Cube::translate(double x, double y, double z)
 	}
 }
 
+/**
+ * Função responsável por redimensionar o cubo nas direções x, y e z.
+ * 
+ * @param x O fator de escala na direção x.
+ * @param y O fator de escala na direção y.
+ * @param z O fator de escala na direção z.
+ */
 void Cube::scale(double x, double y, double z)
 {
 	for (int i = 0; i < 12; i++)
@@ -239,6 +256,11 @@ void Cube::scale(double x, double y, double z)
 	}
 }
 
+/**
+ * Rotaciona o cubo em torno do eixo X pelo ângulo especificado.
+ * 
+ * @param angle O ângulo de rotação em radianos.
+ */
 void Cube::rotateX(double angle)
 {
 
@@ -268,6 +290,11 @@ void Cube::rotateX(double angle)
 	}
 }
 
+/**
+ * Rotaciona o cubo em torno do eixo Y pelo ângulo especificado.
+ * 
+ * @param angle O ângulo de rotação em radianos.
+ */
 void Cube::rotateY(double angle)
 {
 	for (int i = 0; i < 12; i++)
@@ -296,6 +323,11 @@ void Cube::rotateY(double angle)
 	}
 }
 
+/**
+ * Rotaciona o cubo em torno do eixo Z pelo ângulo especificado.
+ * 
+ * @param angle O ângulo de rotação em radianos.
+ */
 void Cube::rotateZ(double angle)
 {
 	for (int i = 0; i < 12; i++)
@@ -324,6 +356,9 @@ void Cube::rotateZ(double angle)
 	}
 }
 
+/**
+ * Converter para coordenadas de câmera.
+ */
 void Cube::convertToCamera(Eigen::Matrix4d transformationMatrix)
 {
 	for (int i = 0; i < 12; i++)
