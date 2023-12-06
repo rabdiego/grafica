@@ -1,5 +1,12 @@
 #include "Camera.h"
 
+/**
+ * @brief Construtor da classe Camera.
+ * 
+ * @param position A posição da câmera.
+ * @param lookAt O ponto para onde a câmera está olhando.
+ * @param viewUp O vetor de orientação da câmera.
+ */
 Camera::Camera(Eigen::Vector3d position, Eigen::Vector3d lookAt, Eigen::Vector3d viewUp)
 {
 	this->position = position;
@@ -16,6 +23,11 @@ Camera::Camera(Eigen::Vector3d position, Eigen::Vector3d lookAt, Eigen::Vector3d
 		0, 0, 0, 1;
 }
 
+/**
+ * @brief Retorna a matriz de transformação da câmera.
+ * 
+ * @return A matriz de transformação da câmera.
+ */
 Eigen::Matrix4d Camera::getTransformationMatrix()
 {
 	return this->transformationMatrix;
