@@ -1,6 +1,17 @@
 #include <vector>
 #include "Cilinder.h"
 
+/**
+ * @brief Construtor da classe Cilinder.
+ * 
+ * @param radius O raio do cilindro.
+ * @param centerBase O centro da base do cilindro.
+ * @param centerTop O centro do topo do cilindro.
+ * @param kAmbient O coeficiente de reflexão ambiente do cilindro.
+ * @param kDif O coeficiente de reflexão difusa do cilindro.
+ * @param kEsp O coeficiente de reflexão especular do cilindro.
+ * @param specularIndex O índice especular do cilindro.
+ */
 Cilinder::Cilinder(double radius, Eigen::Vector3d centerBase, Eigen::Vector3d centerTop, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
 {
 	this->radius = radius;
@@ -37,6 +48,12 @@ Cilinder::Cilinder(double radius, double height, Eigen::Vector3d centerBase, Eig
 	this->structure = 0;
 }
 
+/**
+ * Calcula o ponto de intersecção entre o raio e o cilindro.
+ *
+ * @param ray The ray to intersect with the cylinder.
+ * @return The parameter value t at which the intersection occurs. Returns 1 if no intersection is found.
+ */
 double Cilinder::hasInterceptedRay(Ray ray)
 {
 	Eigen::Vector3d w = ray.initialPoint - this->centerBase;
@@ -49,7 +66,7 @@ double Cilinder::hasInterceptedRay(Ray ray)
 	double c = w.dot(w) - pow(w.dot(this->direction), 2) - pow(this->radius, 2);
 
 	double delta = b * b - 4 * a * c;
-
+	// Se delta < 0, não há intersecção
 	if (a != 0 && delta >= 0)
 	{
 		double tInt = (sqrt(delta) - b) / (2 * a);
@@ -57,6 +74,7 @@ double Cilinder::hasInterceptedRay(Ray ray)
 		pInt = ray.initialPoint + tInt * ray.direction;
 		double insideInterval = (pInt - this->centerBase).dot(this->direction);
 
+		// Verifica se o ponto de intersecção está dentro do intervalo do cilindro
 		if (insideInterval >= 0 && insideInterval <= this->height)
 		{
 			returnValue = tInt;
@@ -64,16 +82,18 @@ double Cilinder::hasInterceptedRay(Ray ray)
 		}
 
 	}
-
+	// Verifica se o raio intercepta a base superior(e inferior) do cilindro
 	double top = this->top->hasInterceptedRay(ray);
 	double bottom = this->bottom->hasInterceptedRay(ray);
 
 	double minimum = -INFINITY;
 	int idx = -1;
 	std::vector <double> distances = { returnValue, top, bottom };
-
+	
+	// Verifica qual é o ponto de intersecção mais próximo
 	for (int i = 0; i < 3; i++)
 	{
+		// Se o ponto de intersecção for válido e menor que o mínimo atual
 		if (distances[i] < 0 && distances[i] > minimum)
 		{
 			minimum = distances[i];
@@ -88,8 +108,19 @@ double Cilinder::hasInterceptedRay(Ray ray)
 	return 1;
 }
 
+/**
+ * Função que calcular a cor de um cilindro.
+ * 
+ * @param tInt O valor de t da interseção do raio com o cilindro.
+ * @param ray O raio que intersecta o cilindro.
+ * @param sources Um vetor de ponteiros para as fontes de luz.
+ * @param shadows Um vetor de booleanos indicando se há sombras nas fontes de luz.
+ * 
+ * @return A cor calculada para o cilindro.
+ */
 Eigen::Vector3d Cilinder::computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows)
-{
+{	
+	// computa a cor do cilindro
 	if (this->structure == 0)
 	{
 		Eigen::Vector3d intesityEye(0, 0, 0);
@@ -115,16 +146,23 @@ Eigen::Vector3d Cilinder::computeColor(double tInt, Ray ray, std::vector<LightSo
 		intesityEye = intesityDifuse + intesitySpecular + intesityAmbient;
 		return intesityEye;
 	}
+	// computa a cor da tampa superior
 	else if (this->structure == 1)
 	{
 		return this->top->computeColor(tInt, ray, sources, shadows);
 	}
+	// computa a cor da tampa inferior
 	else
 	{
 		return this->bottom->computeColor(tInt, ray, sources, shadows);
 	}
 }
 
+
+/**
+ *  Função de translação do cilindro.	
+ 
+*/
 void Cilinder::translate(double x, double y, double z)
 {
 	Eigen::Matrix4d m;
@@ -136,15 +174,18 @@ void Cilinder::translate(double x, double y, double z)
 	Eigen::Vector4d centerTop4;
 	Eigen::Vector4d centerBase4;
 
+	// Adiciona uma quarta coordenada para realizar a translação
 	centerTop4 << this->centerTop[0], this->centerTop[1], this->centerTop[2], 1;
 	centerBase4 << this->centerBase[0], this->centerBase[1], this->centerBase[2], 1;
 
 	centerTop4 = m * centerTop4;
 	centerBase4 = m * centerBase4;
 
+	// Atualiza os valores do centro do topo e da base
 	this->centerTop << centerTop4[0], centerTop4[1], centerTop4[2];
 	this->centerBase << centerBase4[0], centerBase4[1], centerBase4[2];
 
+	// Atualiza a direção do cilindro
 	this->direction = (this->centerTop - this->centerBase).normalized();
 	this->bottom->translate(x, y, z);
 	this->top->translate(x, y, z);
@@ -161,11 +202,18 @@ void  Cilinder::scale(double x, double y, double z)
 	this->radius *= x;
 	this->height *= y;
 
+	// Atualiza o centro do topo e da base
 	this->centerTop = this->centerBase + this->height * this->direction;
 	this->top = new CircularPlane(this->direction, this->centerTop, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 }
 
+
+/**
+ * Rotaciona o cilindro em torno do eixo X por um determinado ângulo.
+ * 
+ * @param angle O ângulo de rotação em radianos.
+ */
 void  Cilinder::rotateX(double angle)
 {
 	Eigen::Matrix4d rx;
@@ -186,6 +234,11 @@ void  Cilinder::rotateX(double angle)
 	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 }
 
+/**
+ * Rotaciona o cilindro em torno do eixo Y por um determinado ângulo.
+ * 
+ * @param angle O ângulo de rotação em radianos.
+ */
 void  Cilinder::rotateY(double angle)
 {
 	Eigen::Matrix4d rx;
@@ -206,6 +259,11 @@ void  Cilinder::rotateY(double angle)
 	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 }
 
+/**
+ * Rotaciona o cilindro em torno do eixo Z por um determinado ângulo.
+ * 
+ * @param angle O ângulo de rotação em radianos.
+ */
 void  Cilinder::rotateZ(double angle)
 {
 	Eigen::Matrix4d rx;
@@ -226,6 +284,7 @@ void  Cilinder::rotateZ(double angle)
 	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 }
 
+// Converte o cilindro para o sistema de coordenadas da câmera
 void Cilinder::convertToCamera(Eigen::Matrix4d transformationMatrix)
 {
 	Eigen::Vector4d centerTop4;

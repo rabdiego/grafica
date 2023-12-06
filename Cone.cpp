@@ -1,6 +1,17 @@
 #include "Cone.h"
 #include <iostream>
 
+/**
+ * @brief Construtor da classe Cone.
+ * 
+ * @param angle O ângulo do cone em radianos.
+ * @param centerBase O centro da base do cone.
+ * @param vertex O vértice do cone.
+ * @param kAmbient O coeficiente de reflexão ambiente do cone.
+ * @param kDif O coeficiente de reflexão difusa do cone.
+ * @param kEsp O coeficiente de reflexão especular do cone.
+ * @param specularIndex O índice de especularidade do cone.
+ */
 Cone::Cone(double angle, Eigen::Vector3d centerBase, Eigen::Vector3d vertex, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
 {
 	this->structure = 0;
@@ -18,6 +29,18 @@ Cone::Cone(double angle, Eigen::Vector3d centerBase, Eigen::Vector3d vertex, Eig
 	this->bottom = new CircularPlane(-this->direction, centerBase, radius, kAmbient, kDif, kEsp, specularIndex);
 }
 
+/**
+ * @brief Construtor da classe Cone.
+ * 
+ * @param radius O raio do cone.
+ * @param height A altura do cone.
+ * @param centerBase O centro da base do cone.
+ * @param direction A direção do cone.
+ * @param kAmbient O coeficiente de reflexão ambiente do cone.
+ * @param kDif O coeficiente de reflexão difusa do cone.
+ * @param kEsp O coeficiente de reflexão especular do cone.
+ * @param specularIndex O índice de especularidade do cone.
+ */
 Cone::Cone(double radius, double height, Eigen::Vector3d centerBase, Eigen::Vector3d direction, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
 {
 	this->radius = radius;
@@ -35,6 +58,12 @@ Cone::Cone(double radius, double height, Eigen::Vector3d centerBase, Eigen::Vect
 	this->bottom = new CircularPlane(-this->direction, centerBase, radius, kAmbient, kDif, kEsp, specularIndex);
 }
 
+/**
+ * Verifica se um raio intercepta o cone e retorna a distância do ponto de interseção ao ponto inicial do raio.
+ * 
+ * @param ray O raio a ser verificado.
+ * @return A distância do ponto de interseção ao ponto inicial do raio. Retorna 1 se não houver interseção.
+ */
 double Cone::hasInterceptedRay(Ray ray)
 {
 	Eigen::Vector3d v = (this->vertex - ray.initialPoint);
@@ -83,6 +112,15 @@ double Cone::hasInterceptedRay(Ray ray)
 	return 1;
 }
 
+/**
+ * Calcula a cor resultante da interseção do raio com o cone.
+ * 
+ * @param tInt O parâmetro de interseção do raio com o cone.
+ * @param ray O raio que intersecta o cone.
+ * @param sources Um vetor de fontes de luz.
+ * @param shadows Um vetor de booleanos indicando se há sombras nas fontes de luz.
+ * @return A cor resultante da interseção do raio com o cone.
+ */
 Eigen::Vector3d Cone::computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows)
 {
 	if (this->structure == 0)
@@ -115,6 +153,13 @@ Eigen::Vector3d Cone::computeColor(double tInt, Ray ray, std::vector<LightSource
 	}
 }
 
+/**
+ * Translada o cone nas coordenadas (x, y, z).
+ * 
+ * @param x A coordenada x do vetor de translação.
+ * @param y A coordenada y do vetor de translação.
+ * @param z A coordenada z do vetor de translação.
+ */
 void Cone::translate(double x, double y, double z)
 {
 	Eigen::Matrix4d m;
@@ -139,6 +184,13 @@ void Cone::translate(double x, double y, double z)
 	this->bottom->translate(x, y, z);
 }
 
+/**
+ * @brief Escala o cone nas direções x, y e z.
+ * 
+ * @param x Fator de escala na direção x (raio).
+ * @param y Fator de escala na direção y (altura).
+ * @param z Fator de escala na direção z (não utilizado).
+ */
 void Cone::scale(double x, double y, double z)
 {
 	/*
@@ -154,6 +206,11 @@ void Cone::scale(double x, double y, double z)
 	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 }
 
+/**
+ * Rotaciona o cone em torno do eixo X por um determinado ângulo.
+ * 
+ * @param angle O ângulo de rotação em radianos.
+ */
 void  Cone::rotateX(double angle)
 {
 	Eigen::Matrix4d rx;
@@ -173,6 +230,11 @@ void  Cone::rotateX(double angle)
 	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 }
 
+/**
+ * Rotaciona o cone em torno do eixo Y por um determinado ângulo.
+ * 
+ * @param angle O ângulo de rotação em radianos.
+ */
 void  Cone::rotateY(double angle)
 {
 	Eigen::Matrix4d rx;
@@ -192,6 +254,11 @@ void  Cone::rotateY(double angle)
 	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 }
 
+/**
+ * Rotaciona o cone em torno do eixo Z por um determinado ângulo.
+ * 
+ * @param angle O ângulo de rotação em radianos.
+ */
 void  Cone::rotateZ(double angle)
 {
 	Eigen::Matrix4d rx;
@@ -211,6 +278,11 @@ void  Cone::rotateZ(double angle)
 	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 }
 
+/**
+ * Converte a posição do cone para o sistema de coordenadas da câmera.
+ * 
+ * @param transformationMatrix A matriz de transformação que será aplicada à posição do cone.
+ */
 void Cone::convertToCamera(Eigen::Matrix4d transformationMatrix)
 {
 	Eigen::Vector4d centerTop4;
