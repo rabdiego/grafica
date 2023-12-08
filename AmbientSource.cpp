@@ -22,9 +22,9 @@ Eigen::Vector3d AmbientSource::getDirection(Eigen::Vector3d pInt)
  * 
  * @param pInt Ponto de interseção entre o raio e a superfície.
  * @param ray Raio incidente.
- * @param ptrIntesityAmbient Ponteiro para a intensidade da luz ambiente.
- * @param ptrIntesityDifuse Ponteiro para a intensidade da luz difusa.
- * @param ptrIntesitySpecular Ponteiro para a intensidade da luz especular.
+ * @param ptrIntensityAmbient Ponteiro para a intensidade da luz ambiente.
+ * @param ptrIntensityDifuse Ponteiro para a intensidade da luz difusa.
+ * @param ptrIntensitySpecular Ponteiro para a intensidade da luz especular.
  * @param normal Vetor normal à superfície.
  * @param kAmbient Coeficiente de reflexão ambiente.
  * @param kDif Coeficiente de reflexão difusa.
@@ -32,32 +32,24 @@ Eigen::Vector3d AmbientSource::getDirection(Eigen::Vector3d pInt)
  * @param specularIndex Índice de especularidade.
  * @param shadowed Indica se a superfície está em sombra.
  */
-void AmbientSource::computeIntensity(Eigen::Vector3d pInt, Ray ray, Eigen::Vector3d* ptrIntesityAmbient, Eigen::Vector3d* ptrIntesityDifuse, Eigen::Vector3d* ptrIntesitySpecular, 
+void AmbientSource::computeIntensity(Eigen::Vector3d pInt, Ray ray, Eigen::Vector3d* ptrIntensityAmbient, Eigen::Vector3d* ptrIntensityDifuse, Eigen::Vector3d* ptrIntensitySpecular, 
 	Eigen::Vector3d normal, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex, bool shadowed)
 {
 	Eigen::Vector3d temp = ((this->intensity).cwiseProduct(kAmbient));
 
-	// Monkey code
 
-	Eigen::Vector3d intesityAmbient = *ptrIntesityAmbient;
+	Eigen::Vector3d intensityAmbient = *ptrIntensityAmbient;
 
-	if (temp[0] > 0)
-	{
-		intesityAmbient[0] += temp[0];
-	}
-	if (temp[1] > 0)
-	{
-		intesityAmbient[1] += temp[1];
-	}
-	if (temp[2] > 0)
-	{
-		intesityAmbient[2] += temp[2];
-	}
+	intensityAmbient[0] += temp[0] > 0 ? temp[0] : 0;
+	intensityAmbient[1] += temp[1] > 0 ? temp[1] : 0;
+	intensityAmbient[2] += temp[2] > 0 ? temp[2] : 0;
 
-	*ptrIntesityAmbient = intesityAmbient;
+	*ptrIntensityAmbient = intensityAmbient;
 }
 
 void AmbientSource::convertToCamera(Eigen::Matrix4d transformationMatrix)
 {
-
+	Eigen::Vector4d origin4(this->origin[0], this->origin[1], this->origin[2], 1);
+	origin4 = transformationMatrix * origin4;
+	this->origin = Eigen::Vector3d(origin4[0], origin4[1], origin4[2]);
 }
