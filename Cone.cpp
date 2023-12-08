@@ -23,9 +23,12 @@ Cone::Cone(double angle, Eigen::Vector3d centerBase, Eigen::Vector3d vertex, Eig
 	this->kEsp = kEsp;
 	this->specularIndex = specularIndex;
 
+	// calculando valor da altura atraves do vertice(vetor) e do centro da base(vetor)
 	this->height = (vertex - centerBase).norm();
+	// calculando o raio atraves da altura e da tangente do angulo
 	this->radius = this->height * tan(this->angle);
 	this->direction = (vertex - centerBase).normalized();
+	// base do cone, feita com um plano circular
 	this->bottom = new CircularPlane(-this->direction, centerBase, radius, kAmbient, kDif, kEsp, specularIndex);
 }
 
@@ -53,7 +56,9 @@ Cone::Cone(double radius, double height, Eigen::Vector3d centerBase, Eigen::Vect
 	this->specularIndex = specularIndex;
 	this->structure = 0;
 
+	// calculando o vertice do cone
 	this->vertex = centerBase + height * this->direction;
+	// calculando o angulo do cone pela arcotangente do raio pela altura
 	this->angle = atan(radius / height);
 	this->bottom = new CircularPlane(-this->direction, centerBase, radius, kAmbient, kDif, kEsp, specularIndex);
 }
@@ -70,19 +75,21 @@ double Cone::hasInterceptedRay(Ray ray)
 	Eigen::Vector3d pInt(0, 0, 0);
 
 	double returnValue = 1;
-
+	// calculando os coeficientes da equacao de segundo grau
 	double a = pow((ray.direction).dot(this->direction), 2) - ((ray.direction).dot(ray.direction)) * pow(cos(this->angle), 2);
 	double b = v.dot(ray.direction) * pow(cos(this->angle), 2) - (v.dot(this->direction)) * ((ray.direction).dot(this->direction));
 	double c = pow(v.dot(this->direction), 2) - v.dot(v) * pow(cos(this->angle), 2);
 
 	double delta = b * b - a * c;
 
+	// se o delta for maior ou igual a zero, o raio intercepta o cone
 	if (a != 0 && delta >= 0)
 	{
 		double tInt = (-sqrt(delta) - b) / a;
 		pInt = ray.initialPoint + tInt * ray.direction;
 		double insideInterval = ((pInt - this->centerBase).dot(this->direction)) / this->direction.norm();
 
+		// se o ponto de intersecao estiver dentro do intervalo da altura do cone, retorna o valor de tInt
 		if (insideInterval >= 0 && insideInterval <= this->height)
 		{
 			returnValue = tInt;
@@ -123,6 +130,7 @@ double Cone::hasInterceptedRay(Ray ray)
  */
 Eigen::Vector3d Cone::computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows)
 {
+	// se o cone for o plano circular inferior, retorna a cor do plano0
 	if (this->structure == 0)
 	{
 		Eigen::Vector3d intesityEye(0, 0, 0);
@@ -139,7 +147,8 @@ Eigen::Vector3d Cone::computeColor(double tInt, Ray ray, std::vector<LightSource
 
 		int idx = 0;
 		for (auto& source : sources)
-		{
+		{	
+			// calculando a intensidade difusa e especular
 			source->computeIntensity(pInt, ray, &intesityAmbient, &intesityDifuse, &intesitySpecular, normal, this->kAmbient, this->kDif, this->kEsp, this->specularIndex, shadows[idx]);
 			idx++;
 		}
@@ -163,6 +172,7 @@ Eigen::Vector3d Cone::computeColor(double tInt, Ray ray, std::vector<LightSource
 void Cone::translate(double x, double y, double z)
 {
 	Eigen::Matrix4d m;
+	// matriz de translacao
 	m << 1, 0, 0, x,
 		 0, 1, 0, y,
 		 0, 0, 1, z,
@@ -198,10 +208,11 @@ void Cone::scale(double x, double y, double z)
 	y -> Altura
 	z -> Nada
 	*/
-
+	// atualizando o raio e a altura
 	this->radius *= x;
 	this->height *= y;
 
+	// atualizando o vertice e o centro da base
 	this->vertex = this->centerBase + this->height * this->direction;
 	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 }
@@ -214,6 +225,7 @@ void Cone::scale(double x, double y, double z)
 void  Cone::rotateX(double angle)
 {
 	Eigen::Matrix4d rx;
+	// matriz de rotacao em torno do eixo x
 	rx << 1, 0, 0, 0,
 		0, cos(angle), -sin(angle), 0,
 		0, sin(angle), cos(angle), 0,
@@ -221,11 +233,15 @@ void  Cone::rotateX(double angle)
 
 	Eigen::Vector4d newDir;
 	newDir << this->direction[0], this->direction[1], this->direction[2], 0;
-
+	
+	// rotacionando o vetor direcao
 	newDir = rx * newDir;
+	
+	// atualizando o vetor direcao
 	this->direction << newDir[0], newDir[1], newDir[2];
 	this->direction = (this->direction).normalized();
 
+	// atualizando o vertice e o centro da base
 	this->vertex = this->centerBase + this->height * this->direction;
 	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 }
@@ -237,8 +253,9 @@ void  Cone::rotateX(double angle)
  */
 void  Cone::rotateY(double angle)
 {
-	Eigen::Matrix4d rx;
-	rx << cos(angle), 0, sin(angle), 0,
+	Eigen::Matrix4d ry;
+	// matriz de rotacao em torno do eixo y
+	ry << cos(angle), 0, sin(angle), 0,
 		0, 1, 0, 0,
 		-sin(angle), 0, cos(angle), 0,
 		0, 0, 0, 1;
@@ -246,10 +263,12 @@ void  Cone::rotateY(double angle)
 	Eigen::Vector4d newDir;
 	newDir << this->direction[0], this->direction[1], this->direction[2], 0;
 
-	newDir = rx * newDir;
+	// rotacionando o vetor direcao
+	newDir = ry * newDir;
 	this->direction << newDir[0], newDir[1], newDir[2];
 	this->direction = (this->direction).normalized();
-
+	
+	// atualizando o vertice e o centro da base
 	this->vertex = this->centerBase + this->height * this->direction;
 	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 }
@@ -260,9 +279,10 @@ void  Cone::rotateY(double angle)
  * @param angle O ângulo de rotação em radianos.
  */
 void  Cone::rotateZ(double angle)
-{
-	Eigen::Matrix4d rx;
-	rx << cos(angle), -sin(angle), 0, 0,
+{	
+	// matriz de rotacao em torno do eixo z
+	Eigen::Matrix4d rz;
+	rz << cos(angle), -sin(angle), 0, 0,
 		sin(angle), cos(angle), 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1;
@@ -270,10 +290,12 @@ void  Cone::rotateZ(double angle)
 	Eigen::Vector4d newDir;
 	newDir << this->direction[0], this->direction[1], this->direction[2], 0;
 
-	newDir = rx * newDir;
+	// rotacionando o vetor direcao
+	newDir = rz * newDir;
 	this->direction << newDir[0], newDir[1], newDir[2];
 	this->direction = (this->direction).normalized();
 
+	// atualizando o vertice e o centro da base
 	this->vertex = this->centerBase + this->height * this->direction;
 	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 }
@@ -285,18 +307,22 @@ void  Cone::rotateZ(double angle)
  */
 void Cone::convertToCamera(Eigen::Matrix4d transformationMatrix)
 {
-	Eigen::Vector4d centerTop4;
+	Eigen::Vector4d vertex;
 	Eigen::Vector4d centerBase4;
 
-	centerTop4 << this->vertex[0], this->vertex[1], this->vertex[2], 1;
-	centerBase4 << this->centerBase[0], this->centerBase[1], this->centerBase[2], 1;
+	// convertendo o vertice e o centro da base para coordenadas homogeneas
+	vertex << this->vertex[0], this->vertex[1], this->vertex[2], 1;
+	base << this->centerBase[0], this->centerBase[1], this->centerBase[2], 1;
+	
+	// convertendo o vertice e o centro da base para o sistema de coordenadas da camera
+	vertex = transformationMatrix * vertex;
+	base = transformationMatrix * base;
+	
+	// atualizando o vertice e o centro da base
+	this->vertex << vertex[0], vertex[1], vertex[2];
+	this->centerBase << base[0], base[1], base[2];
 
-	centerTop4 = transformationMatrix * centerTop4;
-	centerBase4 = transformationMatrix * centerBase4;
-
-	this->vertex << centerTop4[0], centerTop4[1], centerTop4[2];
-	this->centerBase << centerBase4[0], centerBase4[1], centerBase4[2];
-
+	// atualizando o vetor direcao
 	this->direction = (this->vertex - this->centerBase).normalized();
 	this->bottom->convertToCamera(transformationMatrix);
 }
