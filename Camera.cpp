@@ -13,14 +13,16 @@ Camera::Camera(Eigen::Vector3d position, Eigen::Vector3d lookAt, Eigen::Vector3d
 	this->lookAt = lookAt;
 	this->viewUp = viewUp;
 
+	// Calcula os vetores i, j e k.
 	this->k = (position - lookAt).normalized();
 	this->i = (viewUp.cross(k)).normalized();
 	this->j = k.cross(i);
 
+	// matriz de transformação da câmera.
 	this->transformationMatrix << i[0], i[1], i[2], -(i.dot(position)),
-		j[0], j[1], j[2], -(j.dot(position)),
-		k[0], k[1], k[2], -(k.dot(position)),
-		0, 0, 0, 1;
+								  j[0], j[1], j[2], -(j.dot(position)),
+								  k[0], k[1], k[2], -(k.dot(position)),
+									0,    0, 	0, 			1;	
 }
 
 /**
