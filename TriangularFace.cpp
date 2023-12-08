@@ -1,32 +1,8 @@
-/*
-#include "Object.h"
-
-#ifndef TriangularFace_H
-#define TriangularFace_H
-
-class TriangularFace : public Object
-{
-public:
-	Eigen::Vector3d vertexes[3];
-	Eigen::Vector3d normal;
-
-	TriangularFace(Eigen::Vector3d v1, Eigen::Vector3d v2, Eigen::Vector3d v3, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex);
-	double hasInterceptedRay(Ray ray);
-	Eigen::Vector3d computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows);
-
-	void translate(double x, double y, double z);
-	void scale(double x, double y, double z);
-	void rotateX(double angle);
-	void rotateY(double angle);
-	void rotateZ(double angle);
-};
-
-#endif
-*/
-
 #include "TriangularFace.h"
 #include <iostream>
 
+
+// Construtor da classe TriangularFace.
 TriangularFace::TriangularFace(Eigen::Vector3d v1, Eigen::Vector3d v2, Eigen::Vector3d v3, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
 {
 	this->vertexes[0] = v1;
@@ -43,6 +19,7 @@ TriangularFace::TriangularFace(Eigen::Vector3d v1, Eigen::Vector3d v2, Eigen::Ve
 	this->specularIndex = specularIndex;
 }
 
+// Verifica se um raio intercepta a face triangular.
 double TriangularFace::hasInterceptedRay(Ray ray)
 {
 	double tInt = -((ray.initialPoint - this->vertexes[0]).dot(this->normal)) / (ray.direction.dot(this->normal));
@@ -62,6 +39,7 @@ double TriangularFace::hasInterceptedRay(Ray ray)
 	}
 }
 
+// Calcula a cor do ponto de interseção da face triangular.
 Eigen::Vector3d TriangularFace::computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows)
 {
 	Eigen::Vector3d intesityEye(0, 0, 0);
@@ -87,6 +65,7 @@ Eigen::Vector3d TriangularFace::computeColor(double tInt, Ray ray, std::vector<L
 	return intesityEye;
 }
 
+// Translada a face triangular nos eixos x, y e z.
 void TriangularFace::translate(double x, double y, double z)
 {
 	Eigen::Matrix4d m;
@@ -108,6 +87,7 @@ void TriangularFace::translate(double x, double y, double z)
 	this->normal = (r2.cross(r1)).normalized();
 }
 
+// Escala a face triangular nos eixos x, y e z.
 void TriangularFace::scale(double x, double y, double z)
 {
 	Eigen::MatrixXd m(4, 4);
@@ -135,6 +115,7 @@ void TriangularFace::scale(double x, double y, double z)
 	this->normal = (r2.cross(r1)).normalized();
 }
 
+// Rotaciona a face triangular no eixo x.
 void TriangularFace::rotateX(double angle)
 {
 	Eigen::Matrix4d rx;
@@ -155,6 +136,8 @@ void TriangularFace::rotateX(double angle)
 	this->r2 = this->vertexes[2] - this->vertexes[1];
 	this->normal = (r2.cross(r1)).normalized();
 }
+
+// Rotaciona a face triangular no eixo y.
 void TriangularFace::rotateY(double angle)
 {
 	Eigen::Matrix4d rx;
@@ -176,6 +159,8 @@ void TriangularFace::rotateY(double angle)
 	this->normal = (r2.cross(r1)).normalized();
 }
 
+
+// Rotaciona a face triangular no eixo z.
 void TriangularFace::rotateZ(double angle)
 {
 	Eigen::Matrix4d rx;
@@ -197,6 +182,8 @@ void TriangularFace::rotateZ(double angle)
 	this->normal = (r2.cross(r1)).normalized();
 }
 
+
+// Converte a face triangular para o sistema de coordenadas da câmera.	
 void TriangularFace::convertToCamera(Eigen::Matrix4d transformationMatrix)
 {
 	Eigen::Vector4d vertexes4[3];

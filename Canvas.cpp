@@ -1,6 +1,15 @@
 #include "Canvas.h"
 #include <vector>
 
+/**
+ * @brief Construtor da classe Canvas.
+ * 
+ * @param windowDistance Distância da câmera para o plano de projeção.
+ * @param windowWidth Largura do plano de projeção.
+ * @param windowHeight Altura do plano de projeção.
+ * @param numLines Número de linhas do canvas.
+ * @param numColumns Número de colunas do canvas.
+ */
 Canvas::Canvas(double windowDistance, double windowWidth, double windowHeight, double numLines, double numColumns)
 {
 	this->windowDistance = windowDistance;
@@ -16,11 +25,15 @@ Canvas::Canvas(double windowDistance, double windowWidth, double windowHeight, d
 	this->jYMax = windowHeight / 2;  // half_h
 }
 
+
+/**
+ * @brief Classe que representa um tensor.
+ * 
+ * Um tensor é uma estrutura de dados multidimensional que armazena elementos de um determinado tipo.
+ * Neste caso, o tensor é utilizado para armazenar os valores RGB de cada pixel em um canvas.
+ */
 Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene, bool toCamera)
 {
-	/*
-	M�todo para desenhar os objetos do cen�rio na tela
-	*/
 	Tensor canvas(this->numColumns, this->numLines);
 	double yL, xC;
 	int numObjects = scene.getNumElements(), numHitBoxes = scene.getNumHitBoxes();
@@ -57,7 +70,7 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene, bool toCamera)
 
 			std::vector <bool> isShadowed;
 
-			/*Calculamos as dist�ncias para cada objeto
+			/*Calculamos as distancias para cada objeto
 			presente na cena ou em alguma hitbox*/
 			for (int i = 0; i < numObjects; i++)
 			{
@@ -80,7 +93,7 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene, bool toCamera)
 				}
 			}
 
-			/*Vemos qual tem dist�ncia m�nima*/
+			/*Vemos qual tem distancia minima*/
 			double minimum = -INFINITY;
 			int idxMin = -1;
 
