@@ -241,8 +241,8 @@ void  Cilinder::rotateX(double angle)
  */
 void  Cilinder::rotateY(double angle)
 {
-	Eigen::Matrix4d rx;
-	rx << cos(angle), 0, sin(angle), 0,
+	Eigen::Matrix4d ry;
+	ry << cos(angle), 0, sin(angle), 0,
 		0, 1, 0, 0,
 		-sin(angle), 0, cos(angle), 0,
 		0, 0, 0, 1;
@@ -250,7 +250,7 @@ void  Cilinder::rotateY(double angle)
 	Eigen::Vector4d newDir;
 	newDir << this->direction[0], this->direction[1], this->direction[2], 0;
 
-	newDir = rx * newDir;
+	newDir = ry * newDir;
 	this->direction << newDir[0], newDir[1], newDir[2];
 	this->direction = (this->direction).normalized();
 
@@ -266,8 +266,8 @@ void  Cilinder::rotateY(double angle)
  */
 void  Cilinder::rotateZ(double angle)
 {
-	Eigen::Matrix4d rx;
-	rx << cos(angle), -sin(angle), 0, 0,
+	Eigen::Matrix4d rz;
+	rz << cos(angle), -sin(angle), 0, 0,
 		  sin(angle), cos(angle), 0, 0,
 		  0, 0, 1, 0,
 		  0, 0, 0, 1;
@@ -275,7 +275,7 @@ void  Cilinder::rotateZ(double angle)
 	Eigen::Vector4d newDir;
 	newDir << this->direction[0], this->direction[1], this->direction[2], 0;
 
-	newDir = rx * newDir;
+	newDir = rz * newDir;
 	this->direction << newDir[0], newDir[1], newDir[2];
 	this->direction = (this->direction).normalized();
 
@@ -287,17 +287,17 @@ void  Cilinder::rotateZ(double angle)
 // Converte o cilindro para o sistema de coordenadas da câmera
 void Cilinder::convertToCamera(Eigen::Matrix4d transformationMatrix)
 {
-	Eigen::Vector4d centerTop4;
-	Eigen::Vector4d centerBase4;
+	Eigen::Vector4d centerTop;
+	Eigen::Vector4d centerBase;
 
-	centerTop4 << this->centerTop[0], this->centerTop[1], this->centerTop[2], 1;
-	centerBase4 << this->centerBase[0], this->centerBase[1], this->centerBase[2], 1;
+	centerTop << this->centerTop[0], this->centerTop[1], this->centerTop[2], 1;
+	centerBase << this->centerBase[0], this->centerBase[1], this->centerBase[2], 1;
 
-	centerTop4 = transformationMatrix * centerTop4;
-	centerBase4 = transformationMatrix * centerBase4;
+	centerTop = transformationMatrix * centerTop;
+	centerBase = transformationMatrix * centerBase;
 
-	this->centerTop << centerTop4[0], centerTop4[1], centerTop4[2];
-	this->centerBase << centerBase4[0], centerBase4[1], centerBase4[2];
+	this->centerTop << centerTop[0], centerTop[1], centerTop[2];
+	this->centerBase << centerBase[0], centerBase[1], centerBase[2];
 
 	this->direction = (this->centerTop - this->centerBase).normalized();
 	this->bottom->convertToCamera(transformationMatrix);
