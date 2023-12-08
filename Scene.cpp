@@ -47,10 +47,10 @@ void Scene::convertObjectsToCamera(bool lights)
 
 int Scene::getNumElements()
 {
-	return (this->objects).size();
+	return (int) (this->objects).size();
 }
 
 int Scene::getNumHitBoxes()
 {
-	return (this->hitboxes).size();
+	return (int) (this->hitboxes).size();
 }

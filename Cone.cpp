@@ -211,6 +211,9 @@ void  Cone::rotateZ(double angle)
 	this->bottom = new CircularPlane(-this->direction, this->centerBase, this->radius, this->kAmbient, this->kDif, this->kEsp, this->specularIndex);
 }
 
+void Cone::rotateAny(double angle, Eigen::Vector3d p1, Eigen::Vector3d p2)
+{}
+
 void Cone::convertToCamera(Eigen::Matrix4d transformationMatrix)
 {
 	Eigen::Vector4d centerTop4;

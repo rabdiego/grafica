@@ -1,7 +1,7 @@
 #include "Canvas.h"
 #include <vector>
 
-Canvas::Canvas(double windowDistance, double windowWidth, double windowHeight, double numLines, double numColumns)
+Canvas::Canvas(double windowDistance, double windowWidth, double windowHeight, int numLines, int numColumns)
 {
 	this->windowDistance = windowDistance;
 	this->windowWidth = windowWidth;  // pov_w

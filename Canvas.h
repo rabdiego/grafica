@@ -16,14 +16,14 @@ public:
 	double windowDistance;
 	double windowWidth;
 	double windowHeight;
-	double numLines;
-	double numColumns;
+	int numLines;
+	int numColumns;
 	double deltaX;
 	double deltaY;
 	double jXMin;
 	double jYMax;
 
-	Canvas(double windowDistance, double windowWidth, double windowHeight, double numLines, double numColumns);
+	Canvas(double windowDistance, double windowWidth, double windowHeight, int numLines, int numColumns);
 	Tensor raycast(Eigen::Vector3d observable, Scene scene, bool toCamera);
 };
 

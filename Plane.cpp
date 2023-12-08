@@ -2,7 +2,7 @@
 #include <iostream>
 #include <cmath>
 
-SDL_Color GetPixelColor(const SDL_Surface* pSurface, const int X, const int Y)
+SDL_Color GetPixelColor(const SDL_Surface* pSurface, int X, int Y)
 {
 	// Bytes per pixel
 	const Uint8 Bpp = pSurface->format->BytesPerPixel;
@@ -25,7 +25,7 @@ SDL_Color GetPixelColor(const SDL_Surface* pSurface, const int X, const int Y)
 	return Color;
 }
 
-Plane::Plane(SDL_Surface* texture, Eigen::Vector3d normal, Eigen::Vector3d center, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, double specularIndex)
+Plane::Plane(SDL_Surface* texture, Eigen::Vector3d normal, Eigen::Vector3d center, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
 {
 	this->texture = texture;
 	this->normal = normal.normalized();
@@ -96,7 +96,7 @@ Eigen::Vector3d Plane::computeColor(double tInt, Ray ray, std::vector<LightSourc
 	}
 	else
 	{
-		SDL_Color colorToPaint = GetPixelColor(this->texture, pIntBase[0], pIntBase[1]);
+		SDL_Color colorToPaint = GetPixelColor(this->texture, (int) pIntBase[0], (int) pIntBase[1]);
 		intesityAmbient << (int)colorToPaint.r, (int)colorToPaint.g, (int)colorToPaint.b;
 	}
 
@@ -148,7 +148,8 @@ void  Plane::rotateX(double angle)
 	this->normal << newDir[0], newDir[1], newDir[2];
 	this->normal = (this->normal).normalized();
 
-	int menor = 0, menorValor = normal[0];
+	int menor = 0;
+	double menorValor = normal[0];
 	for (int i = 1; i < 3; i++)
 	{
 		if (normal[i] < menorValor)
@@ -190,7 +191,8 @@ void  Plane::rotateY(double angle)
 	this->normal << newDir[0], newDir[1], newDir[2];
 	this->normal = (this->normal).normalized();
 
-	int menor = 0, menorValor = normal[0];
+	int menor = 0;
+	double menorValor = normal[0];
 	for (int i = 1; i < 3; i++)
 	{
 		if (normal[i] < menorValor)
@@ -232,7 +234,8 @@ void  Plane::rotateZ(double angle)
 	this->normal << newDir[0], newDir[1], newDir[2];
 	this->normal = (this->normal).normalized();
 
-	int menor = 0, menorValor = normal[0];
+	int menor = 0;
+	double menorValor = normal[0];
 	for (int i = 1; i < 3; i++)
 	{
 		if (normal[i] < menorValor)
@@ -258,6 +261,9 @@ void  Plane::rotateZ(double angle)
 	this->axis1 = this->axis1.normalized();
 	this->axis2 = (normal.cross(this->axis1)).normalized();
 }
+
+void Plane::rotateAny(double angle, Eigen::Vector3d p1, Eigen::Vector3d p2)
+{}
 
 void Plane::convertToCamera(Eigen::Matrix4d transformationMatrix)
 {

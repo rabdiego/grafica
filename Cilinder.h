@@ -31,9 +31,12 @@ public:
 
 	void translate(double x, double y, double z);
 	void scale(double x, double y, double z);
+
 	void rotateX(double angle);
 	void rotateY(double angle);
 	void rotateZ(double angle);
+	void rotateAny(double angle, Eigen::Vector3d p1, Eigen::Vector3d p2);
+
 	void convertToCamera(Eigen::Matrix4d transformationMatrix);
 };
 

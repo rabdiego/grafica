@@ -36,8 +36,8 @@ int main(int argc, char* argv[])
 	double windowDistance = 30;
 	double windowWidth = 60;
 	double windowHeight = 60;
-	double numColumns = 500;
-	double numLines = 500;
+	int numColumns = 500;
+	int numLines = 500;
 
 	// Criação da janela
 	SDL_Window* window = SDL_CreateWindow
@@ -45,8 +45,8 @@ int main(int argc, char* argv[])
 		"Cena",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
-		(int) numColumns,
-		(int) numLines,
+		numColumns,
+		numLines,
 		SDL_WINDOW_SHOWN
 	);
 
@@ -72,8 +72,8 @@ int main(int argc, char* argv[])
 	Scene scene;
 	Camera* camera = new Camera
 	(
-		Eigen::Vector3d(0, -20, -350),
-		Eigen::Vector3d(0, -20, 0),
+		Eigen::Vector3d(0, 0, 0),
+		Eigen::Vector3d(0, 0, -1),
 		Eigen::Vector3d(0, 1, 0)
 	);
 	scene.setCamera(camera);
@@ -321,8 +321,8 @@ int main(int argc, char* argv[])
 		100,
 		10,
 		100,
-		Eigen::Vector3d(50, 31, 20),
-		Eigen::Vector3d(50, 31, 20),
+		Eigen::Vector3d(200, 31, 20),
+		Eigen::Vector3d(200, 31, 20),
 		Eigen::Vector3d(0.3, 0.3, 0.3),
 		10
 	);
@@ -499,7 +499,7 @@ int main(int argc, char* argv[])
 		Eigen::Vector3d(40, 40, 40),
 		6
 	);
-	
+
 	scene.addObject(sky);
 	scene.addObject(skyLeft);
 	scene.addObject(skyRight);
@@ -529,12 +529,14 @@ int main(int argc, char* argv[])
 	scene.addHitBox(leg2HitBox);
 	scene.addHitBox(leg3HitBox);
 	scene.addHitBox(leg4HitBox);
+
 	/*
 	scene.addObject(rogerBody);
 	scene.addObject(rogerHead);
 	scene.addObject(rogerLeftEye);
 	scene.addObject(rogerRightEye);
 	*/
+
 	scene.addObject(springButton);
 	scene.addObject(summerButton);
 	scene.addObject(autumnButton);

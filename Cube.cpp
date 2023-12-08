@@ -1,28 +1,3 @@
-/*
-#include "TriangularFace.h"
-
-#ifndef Cube_H
-#define Cube_H
-
-class Cube : public Object
-{
-public:
-	TriangularFace faces[12];
-
-	Cube(Eigen::Vector3d mainVertex, double height, double width, double depth, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex);
-	double hasInterceptedRay(Ray ray);
-	Eigen::Vector3d computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows);
-
-	void translate(double x, double y, double z);
-	void scale(double x, double y, double z);
-	void rotateX(double angle);
-	void rotateY(double angle);
-	void rotateZ(double angle);
-};
-
-#endif
-*/
-
 #include <iostream>
 #include "Cube.h"
 
@@ -321,6 +296,14 @@ void Cube::rotateZ(double angle)
 			this->center[1],
 			this->center[2]
 		);
+	}
+}
+
+void Cube::rotateAny(double angle, Eigen::Vector3d p1, Eigen::Vector3d p2)
+{
+	for (int i = 0; i < 12; i++)
+	{
+		faces[i]->rotateAny(angle, p1, p2);
 	}
 }
 

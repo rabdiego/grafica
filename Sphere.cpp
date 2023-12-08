@@ -87,6 +87,9 @@ void  Sphere::rotateZ(double angle)
 
 }
 
+void Sphere::rotateAny(double angle, Eigen::Vector3d p1, Eigen::Vector3d p2)
+{}
+
 void Sphere::convertToCamera(Eigen::Matrix4d transformationMatrix)
 {
 	Eigen::Vector4d center4;

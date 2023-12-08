@@ -17,7 +17,7 @@ void HitBox::addObject(Object* object)
 
 int HitBox::getNumElements()
 {
-	return (this->objects).size();
+	return (int) (this->objects).size();
 }
 
 bool HitBox::hasInterceptedRay(Ray ray)

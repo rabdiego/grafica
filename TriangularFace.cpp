@@ -1,29 +1,3 @@
-/*
-#include "Object.h"
-
-#ifndef TriangularFace_H
-#define TriangularFace_H
-
-class TriangularFace : public Object
-{
-public:
-	Eigen::Vector3d vertexes[3];
-	Eigen::Vector3d normal;
-
-	TriangularFace(Eigen::Vector3d v1, Eigen::Vector3d v2, Eigen::Vector3d v3, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex);
-	double hasInterceptedRay(Ray ray);
-	Eigen::Vector3d computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows);
-
-	void translate(double x, double y, double z);
-	void scale(double x, double y, double z);
-	void rotateX(double angle);
-	void rotateY(double angle);
-	void rotateZ(double angle);
-};
-
-#endif
-*/
-
 #include "TriangularFace.h"
 #include <iostream>
 
@@ -155,6 +129,7 @@ void TriangularFace::rotateX(double angle)
 	this->r2 = this->vertexes[2] - this->vertexes[1];
 	this->normal = (r2.cross(r1)).normalized();
 }
+
 void TriangularFace::rotateY(double angle)
 {
 	Eigen::Matrix4d rx;
@@ -189,6 +164,75 @@ void TriangularFace::rotateZ(double angle)
 	{
 		vertexes4[i] << vertexes[i][0], vertexes[i][1], vertexes[i][2], 1;
 		vertexes4[i] = rx * vertexes4[i];
+		vertexes[i] << vertexes4[i][0], vertexes4[i][1], vertexes4[i][2];
+	}
+
+	this->r1 = this->vertexes[1] - this->vertexes[0];
+	this->r2 = this->vertexes[2] - this->vertexes[1];
+	this->normal = (r2.cross(r1)).normalized();
+}
+
+void TriangularFace::rotateAny(double angle, Eigen::Vector3d p1, Eigen::Vector3d p2)
+{
+	Eigen::Vector3d V = p2 - p1;
+	Eigen::Vector3d u = V.normalized();
+
+	double a = u[0];
+	double b = u[1];
+	double c = u[2];
+	double d = sqrt(b * b + c * c);
+
+	Eigen::Matrix4d T1;
+	Eigen::Matrix4d T2;
+	Eigen::Matrix4d RX1;
+	Eigen::Matrix4d RX2;
+	Eigen::Matrix4d RY1;
+	Eigen::Matrix4d RY2;
+	Eigen::Matrix4d RZ;
+	Eigen::Matrix4d M;
+
+	T1 << 1, 0, 0, -p1[0],
+		0, 1, 0, -p1[1],
+		0, 0, 1, -p1[2],
+		0, 0, 0, 1;
+
+	T2 << 1, 0, 0, p1[0],
+		0, 1, 0, p1[1],
+		0, 0, 1, p1[2],
+		0, 0, 0, 1;
+
+	RX1 << 1, 0, 0, 0,
+		1, c / d, -b / d, 0,
+		0, b / d, c / d, 0,
+		0, 0, 0, 1;
+
+	RX2 << 1, 0, 0, 0,
+		1, c / d, b / d, 0,
+		0, -b / d, c / d, 0,
+		0, 0, 0, 1;
+
+	RY1 << d, 0, -a, 0,
+		0, 1, 0, 0,
+		a, 0, d, 0,
+		0, 0, 0, 1;
+
+	RY2 << d, 0, a, 0,
+		0, 1, 0, 0,
+		-a, 0, d, 0,
+		0, 0, 0, 1;
+
+	RZ << cos(angle), -sin(angle), 0, 0,
+		sin(angle), cos(angle), 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1;
+
+	M = T2 * RX2 * RY2 * RZ * RY1 * RX1 * T1;
+
+	Eigen::Vector4d vertexes4[3];
+	for (int i = 0; i < 3; i++)
+	{
+		vertexes4[i] << vertexes[i][0], vertexes[i][1], vertexes[i][2], 1;
+		vertexes4[i] = M * vertexes4[i];
 		vertexes[i] << vertexes4[i][0], vertexes4[i][1], vertexes4[i][2];
 	}
 
