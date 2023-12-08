@@ -35,11 +35,13 @@ Eigen::Vector3d AmbientSource::getDirection(Eigen::Vector3d pInt)
 void AmbientSource::computeIntensity(Eigen::Vector3d pInt, Ray ray, Eigen::Vector3d* ptrIntensityAmbient, Eigen::Vector3d* ptrIntensityDifuse, Eigen::Vector3d* ptrIntensitySpecular, 
 	Eigen::Vector3d normal, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex, bool shadowed)
 {
+	
 	Eigen::Vector3d temp = ((this->intensity).cwiseProduct(kAmbient));
 
 
 	Eigen::Vector3d intensityAmbient = *ptrIntensityAmbient;
 
+	// Soma as intensidades
 	intensityAmbient[0] += temp[0] > 0 ? temp[0] : 0;
 	intensityAmbient[1] += temp[1] > 0 ? temp[1] : 0;
 	intensityAmbient[2] += temp[2] > 0 ? temp[2] : 0;
@@ -48,8 +50,13 @@ void AmbientSource::computeIntensity(Eigen::Vector3d pInt, Ray ray, Eigen::Vecto
 }
 
 void AmbientSource::convertToCamera(Eigen::Matrix4d transformationMatrix)
-{
+{	
+	// Converte a origem para coordenadas de câmera
 	Eigen::Vector4d origin4(this->origin[0], this->origin[1], this->origin[2], 1);
+
+	// Multiplica a origem pela matriz de transformação
 	origin4 = transformationMatrix * origin4;
+
+	// Atualiza a origem
 	this->origin = Eigen::Vector3d(origin4[0], origin4[1], origin4[2]);
 }
