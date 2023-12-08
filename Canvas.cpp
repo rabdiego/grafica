@@ -36,15 +36,19 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene, bool toCamera)
 {
 	Tensor canvas(this->numColumns, this->numLines);
 	double yL, xC;
+
+	// Numero de objetos e de hitboxes na cena
 	int numObjects = scene.getNumElements(), numHitBoxes = scene.getNumHitBoxes();
 	Eigen::Vector3d pJ;
 	int numObjectsVector = numObjects;
 
+	// Converte os objetos para coordenadas de câmera, se necessario
 	if (toCamera)
 	{
 		scene.convertObjectsToCamera(true);
 	}
 
+	// Calcula o numero de objetos na cena e nas hitboxes
 	for (int i = 0; i < numHitBoxes; i++)
 	{
 		numObjectsVector += (*scene.hitboxes[i]).getNumElements();
@@ -106,11 +110,12 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene, bool toCamera)
 				}
 			}
 
+			// Se houver interseção, calcula a cor do pixel
 			if (idxMin != -1)
 			{
 				Eigen::Vector3d pInt = ray.initialPoint + minimum * ray.direction;
 				Eigen::Vector3d sourceDirection(0, 0, 0);
-
+					
 				for (auto& source : scene.sources)
 				{
 					int idx2 = 0;
@@ -167,6 +172,7 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene, bool toCamera)
 					}
 				}
 
+				// Calcula a cor do pixel
 				Eigen::Vector3d color = objects[idxMin]->computeColor(minimum, ray, scene.sources, isShadowed);
 
 				canvas.red(l, c) = color(0);
