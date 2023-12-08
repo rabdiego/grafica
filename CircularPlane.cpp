@@ -94,7 +94,18 @@ void CircularPlane::translate(double x, double y, double z)
 // Metodo para escalar o plano circular
 void CircularPlane::scale(double x, double y, double z)
 {
+	Eigen::Matrix4d m;
+	m << x, 0, 0, 0,
+		 0, y, 0, 0,
+		 0, 0, z, 0,
+		 0, 0, 0, 1;
 
+	Eigen::Vector4d center4;
+	center4 << this->center[0], this->center[1], this->center[2], 1;
+
+	center4 = m * center4;
+
+	this->center << center4[0], center4[1], center4[2];
 }
 
 // Metodo para rotacionar o plano circular em torno do eixo X

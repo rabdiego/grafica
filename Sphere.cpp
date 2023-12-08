@@ -77,22 +77,19 @@ void  Sphere::scale(double x, double y, double z)
 	this->radius *= x;
 }
 
-// Rotaciona a esfera em torno do eixo x.
+
 void  Sphere::rotateX(double angle)
 {
-
+	// nao tem sentido rotacionar uma esfera com cor "chapada"
 }
 
-// Rotaciona a esfera em torno do eixo y.
 void  Sphere::rotateY(double angle)
 {
-
+	// nao tem sentido rotacionar uma esfera com cor "chapada"
 }
-
-// Rotaciona a esfera em torno do eixo z.
 void  Sphere::rotateZ(double angle)
 {
-
+	// nao tem sentido rotacionar uma esfera com cor "chapada"
 }
 
 // Converte a esfera para o sistema de coordenadas da câmera.
