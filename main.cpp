@@ -321,8 +321,8 @@ int main(int argc, char* argv[])
 		100,
 		10,
 		100,
-		Eigen::Vector3d(200, 31, 20),
-		Eigen::Vector3d(200, 31, 20),
+		Eigen::Vector3d(50, 31, 20),
+		Eigen::Vector3d(50, 31, 20),
 		Eigen::Vector3d(0.3, 0.3, 0.3),
 		10
 	);
