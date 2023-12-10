@@ -1,5 +1,15 @@
 #include "Sphere.h"
 
+/**
+ * @brief Construtor da classe Sphere.
+ * 
+ * @param radius O raio da esfera.
+ * @param center O centro da esfera.
+ * @param kAmbient O coeficiente de reflexão ambiente da esfera.
+ * @param kDif O coeficiente de reflexão difusa da esfera.
+ * @param kEsp O coeficiente de reflexão especular da esfera.
+ * @param specularIndex O índice especular da esfera.
+ */
 Sphere::Sphere(double radius, Eigen::Vector3d center, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
 {
 	this->radius = radius;
@@ -10,6 +20,12 @@ Sphere::Sphere(double radius, Eigen::Vector3d center, Eigen::Vector3d kAmbient, 
 	this->specularIndex = specularIndex;
 }
 
+/**
+ * Verifica se a esfera interceptou um raio.
+ *
+ * @param ray O raio a ser verificado.
+ * @return true se a esfera interceptou o raio, false caso contrário.
+ */
 double Sphere::hasInterceptedRay(Ray ray)
 {
 	Eigen::Vector3d w = ray.initialPoint - this->center;
@@ -25,6 +41,15 @@ double Sphere::hasInterceptedRay(Ray ray)
 	return 1;
 }
 
+/**
+ * Calcula a cor do ponto de interseção da esfera com um raio.
+ *
+ * @param tInt O parâmetro de interseção do raio com a esfera.
+ * @param ray O raio que intersecta a esfera.
+ * @param sources Um vetor contendo as fontes de luz no cenário.
+ * @param shadows Um vetor de booleanos indicando se cada fonte de luz está bloqueada por sombras.
+ * @return A cor calculada para o ponto de interseção.
+ */
 Eigen::Vector3d Sphere::computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows)
 {
 	Eigen::Vector3d pInt(0, 0, 0);
@@ -51,6 +76,13 @@ Eigen::Vector3d Sphere::computeColor(double tInt, Ray ray, std::vector<LightSour
 	return intesityEye;
 }
 
+/**
+ * Translada a esfera nas coordenadas especificadas.
+ *
+ * @param x A coordenada x para a translação.
+ * @param y A coordenada y para a translação.
+ * @param z A coordenada z para a translação.
+ */
 void Sphere::translate(double x, double y, double z)
 {
 	Eigen::Matrix4d m;
@@ -90,6 +122,11 @@ void  Sphere::rotateZ(double angle)
 void Sphere::rotateAny(double angle, Eigen::Vector3d p1, Eigen::Vector3d p2)
 {}
 
+/**
+ * Converte a esfera para o sistema de coordenadas da câmera usando a matriz de transformação fornecida.
+ *
+ * @param transformationMatrix A matriz de transformação 4x4 que representa a transformação da esfera.
+ */
 void Sphere::convertToCamera(Eigen::Matrix4d transformationMatrix)
 {
 	Eigen::Vector4d center4;

@@ -1,6 +1,22 @@
 #include <iostream>
 #include "Cube.h"
 
+/**
+ * @brief Construtor da classe Cube.
+ * 
+ * A classe Cube representa um cubo tridimensional definido por um vértice principal,
+ * largura, altura, profundidade, coeficientes de reflexão ambiente, difusa e especular,
+ * e um índice especular.
+ * 
+ * @param mainVertex O vértice principal do cubo.
+ * @param width A largura do cubo.
+ * @param height A altura do cubo.
+ * @param depth A profundidade do cubo.
+ * @param kAmbient O coeficiente de reflexão ambiente do cubo.
+ * @param kDif O coeficiente de reflexão difusa do cubo.
+ * @param kEsp O coeficiente de reflexão especular do cubo.
+ * @param specularIndex O índice especular do cubo.
+ */
 Cube::Cube(Eigen::Vector3d mainVertex, double width, double height, double depth, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
 {
 	this->structure = 0;
@@ -19,6 +35,8 @@ Cube::Cube(Eigen::Vector3d mainVertex, double width, double height, double depth
 	Eigen::Vector3d f = mainVertex + Eigen::Vector3d(width, height, -depth);
 	Eigen::Vector3d g = mainVertex + Eigen::Vector3d(0, height, -depth);
 	Eigen::Vector3d h = mainVertex + Eigen::Vector3d(0, 0, -depth);
+
+	// Faces do cubo, totalizando 12 faces.
 
 	// Frente embaixo
 	faces[0] = new TriangularFace
@@ -165,6 +183,12 @@ Cube::Cube(Eigen::Vector3d mainVertex, double width, double height, double depth
 	);
 }
 
+/**
+ * Verifica se o raio intercepta o cubo e retorna a distância até o ponto de interseção mais próximo.
+ * 
+ * @param ray O raio a ser verificado.
+ * @return A distância até o ponto de interseção mais próximo. Retorna 1 se não houver interseção.
+ */
 double Cube::hasInterceptedRay(Ray ray)
 {
 	double distances[12];
@@ -193,13 +217,25 @@ double Cube::hasInterceptedRay(Ray ray)
 	return 1;
 }
 
+/**
+ * Calcula a cor do cubo.
+ *
+ * @param tInt O valor de tInt.
+ * @param ray O raio.
+ * @param sources As fontes de luz.
+ * @param shadows As sombras.
+ * @return A cor calculada.
+ */
 Eigen::Vector3d Cube::computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows)
 {
+	// calculo da cor de cada face do cubo
 	return faces[structure]->computeColor(tInt, ray, sources, shadows);
 }
 
+
 void Cube::translate(double x, double y, double z)
 {
+	// translada cada face do cubo
 	for (int i = 0; i < 12; i++)
 	{
 		faces[i]->translate(x, y, z);
@@ -208,6 +244,7 @@ void Cube::translate(double x, double y, double z)
 
 void Cube::scale(double x, double y, double z)
 {
+	// aplica escala em cada face do cubo
 	for (int i = 0; i < 12; i++)
 	{
 		faces[i]->scale(x, y, z);
@@ -216,7 +253,7 @@ void Cube::scale(double x, double y, double z)
 
 void Cube::rotateX(double angle)
 {
-
+	// Translada o cubo para a origem, rotaciona e translada de volta para a posição original.
 	for (int i = 0; i < 12; i++)
 	{
 		faces[i]->translate
@@ -227,11 +264,13 @@ void Cube::rotateX(double angle)
 		);
 	}
 
+	// Rotaciona cada face do cubo
 	for (int i = 0; i < 12; i++)
 	{
 		faces[i]->rotateX(angle);
 	}
 
+	// Translada o cubo de volta para a posição original
 	for (int i = 0; i < 12; i++)
 	{
 		faces[i]->translate
@@ -243,6 +282,7 @@ void Cube::rotateX(double angle)
 	}
 }
 
+// O mesmo que o rotateX
 void Cube::rotateY(double angle)
 {
 	for (int i = 0; i < 12; i++)
@@ -271,6 +311,7 @@ void Cube::rotateY(double angle)
 	}
 }
 
+// O mesmo que o rotateX
 void Cube::rotateZ(double angle)
 {
 	for (int i = 0; i < 12; i++)
@@ -301,14 +342,17 @@ void Cube::rotateZ(double angle)
 
 void Cube::rotateAny(double angle, Eigen::Vector3d p1, Eigen::Vector3d p2)
 {
+	// rotaciona cada face do cubo
 	for (int i = 0; i < 12; i++)
 	{
 		faces[i]->rotateAny(angle, p1, p2);
 	}
 }
 
+// Converte as coordenadas do cubo para o sistema de coordenadas da câmera.
 void Cube::convertToCamera(Eigen::Matrix4d transformationMatrix)
 {
+	// converte cada face do cubo
 	for (int i = 0; i < 12; i++)
 	{
 		faces[i]->convertToCamera(transformationMatrix);

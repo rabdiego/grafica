@@ -2,29 +2,46 @@
 #include <iostream>
 #include <cmath>
 
+/**
+ * Retorna a cor do pixel na posição especificada da textura.
+ *
+ * @param pSurface O ponteiro para a superfície SDL.
+ * @param X A coordenada X do pixel.
+ * @param Y A coordenada Y do pixel.
+ * @return A cor do pixel na posição especificada.
+ */
 SDL_Color GetPixelColor(const SDL_Surface* pSurface, int X, int Y)
 {
-	// Bytes per pixel
+	// Obtem o número de bytes por pixel da superfície.
 	const Uint8 Bpp = pSurface->format->BytesPerPixel;
 
-	/*
-	Retrieve the address to a specific pixel
-	pSurface->pixels	= an array containing the SDL_Surface' pixels
-	pSurface->pitch		= the length of a row of pixels (in bytes)
-	X and Y				= the offset on where on the image to retrieve the pixel, (0, 0) is in the upper left corner of the image
-	*/
+	// Calcula o endereço do pixel.
 	Uint8* pPixel = (Uint8*)pSurface->pixels + Y * pSurface->pitch + X * Bpp;
 
+	// Converte o pixel para o formato de 32 bits.
 	Uint32 PixelData = *(Uint32*)pPixel;
 
+	// Obtém a cor RGB do pixel.
 	SDL_Color Color = { 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE };
 
-	// Retrieve the RGB values of the specific pixel
+	// Obtém a cor RGB nos bits corretos.
 	SDL_GetRGB(PixelData, pSurface->format, &Color.r, &Color.g, &Color.b);
 
 	return Color;
 }
 
+/**
+ * @brief Construtor do plano.
+ * 
+ * @param texture A textura do plano.
+ * @param normal O vetor normal do plano.
+ * @param center O centro do plano.
+ * @param kAmbient O coeficiente de reflexão ambiente do plano.
+ * @param kDif O coeficiente de reflexão difusa do plano.
+ * @param kEsp O coeficiente de reflexão especular do plano.
+ * @param specularIndex O índice de reflexão especular do plano.
+ * @return O plano criado.
+ */
 Plane::Plane(SDL_Surface* texture, Eigen::Vector3d normal, Eigen::Vector3d center, Eigen::Vector3d kAmbient, Eigen::Vector3d kDif, Eigen::Vector3d kEsp, int specularIndex)
 {
 	this->texture = texture;
@@ -37,6 +54,8 @@ Plane::Plane(SDL_Surface* texture, Eigen::Vector3d normal, Eigen::Vector3d cente
 
 	int menor;
 	double menorValor = INFINITY;
+	
+	// Encontra o menor valor absoluto do vetor normal.
 	for (int i = 1; i < 3; i++)
 	{
 		if (std::abs(normal[i]) < menorValor)
@@ -46,6 +65,7 @@ Plane::Plane(SDL_Surface* texture, Eigen::Vector3d normal, Eigen::Vector3d cente
 		}
 	}
 
+	// Encontra o vetor que é ortogonal ao vetor normal.
 	if (menor == 0)
 	{
 		this->axis1 << 0, -normal[2], normal[1];
@@ -59,10 +79,18 @@ Plane::Plane(SDL_Surface* texture, Eigen::Vector3d normal, Eigen::Vector3d cente
 		this->axis1 << -normal[1], normal[0], 0;
 	}
 
+	// Normaliza os vetores.
 	this->axis1 = this->axis1.normalized();
 	this->axis2 = (normal.cross(this->axis1)).normalized();
 }
 
+
+/**
+ * @brief Verifica se o raio intercepta o plano.
+ * 
+ * @param ray O raio.
+ * @return O valor do t de interseção.
+ */
 double Plane::hasInterceptedRay(Ray ray)
 {
 	Eigen::Vector3d w = ray.initialPoint - this->center;
@@ -74,6 +102,15 @@ double Plane::hasInterceptedRay(Ray ray)
 	return 1;
 }
 
+/**
+ * @brief Computa a cor do pixel do plano.
+ * 
+ * @param tInt O valor do t de interseção.
+ * @param ray O raio.
+ * @param sources O vetor de fontes de luz.
+ * @param shadows O vetor de booleanos que indica se a fonte de luz está na sombra.
+ * @return A cor do pixel do plano.
+ */
 Eigen::Vector3d Plane::computeColor(double tInt, Ray ray, std::vector<LightSource*> sources, std::vector<bool> shadows)
 {
 	Eigen::Vector3d intesityEye(0, 0, 0);
@@ -90,8 +127,10 @@ Eigen::Vector3d Plane::computeColor(double tInt, Ray ray, std::vector<LightSourc
 	Eigen::Vector3d singleSpecular;
 	Eigen::Vector3d normal = this->normal;
 
+	
 	if (this->texture == NULL)
 	{
+		// Se não há textura, a cor ambiente é preta.
 		intesityAmbient << 0, 0, 0;
 	}
 	else
@@ -112,6 +151,13 @@ Eigen::Vector3d Plane::computeColor(double tInt, Ray ray, std::vector<LightSourc
 	return intesityEye;
 }
 
+/**
+ * @brief Translada o plano.
+ * 
+ * @param x O valor da translação no eixo x.
+ * @param y O valor da translação no eixo y.
+ * @param z O valor da translação no eixo z.
+ */
 void Plane::translate(double x, double y, double z)
 {
 	Eigen::Matrix4d m;
@@ -130,24 +176,32 @@ void Plane::translate(double x, double y, double z)
 
 void Plane::scale(double x, double y, double z)
 {
-
+	// nao implementado
 }
 
+
+/**
+ * @brief Metodos para rotação do plano em torno dos eixos
+ * 
+ * @param angle O ângulo de rotação.
+*/
 void  Plane::rotateX(double angle)
 {
+	// matriz de rotação
 	Eigen::Matrix4d rx;
 	rx << 1, 0, 0, 0,
 		0, cos(angle), -sin(angle), 0,
 		0, sin(angle), cos(angle), 0,
 		0, 0, 0, 1;
 
+	// vetor de direção rotacionado
 	Eigen::Vector4d newDir;
 	newDir << this->normal[0], this->normal[1], this->normal[2], 0;
-
 	newDir = rx * newDir;
 	this->normal << newDir[0], newDir[1], newDir[2];
 	this->normal = (this->normal).normalized();
 
+	// encontra o menor valor absoluto do vetor normal
 	int menor = 0;
 	double menorValor = normal[0];
 	for (int i = 1; i < 3; i++)
@@ -159,6 +213,7 @@ void  Plane::rotateX(double angle)
 		}
 	}
 
+	// encontra o vetor que é ortogonal ao vetor normal
 	if (menor == 0)
 	{
 		this->axis1 << 0, -normal[2], normal[1];
@@ -172,10 +227,12 @@ void  Plane::rotateX(double angle)
 		this->axis1 << -normal[1], normal[0], 0;
 	}
 
+	// normaliza os vetores
 	this->axis1 = this->axis1.normalized();
 	this->axis2 = (normal.cross(this->axis1)).normalized();
 }
 
+// essencialmente o mesmo que o eixo X
 void  Plane::rotateY(double angle)
 {
 	Eigen::Matrix4d rx;
@@ -219,6 +276,7 @@ void  Plane::rotateY(double angle)
 	this->axis2 = (normal.cross(this->axis1)).normalized();
 }
 
+// essencialmente o mesmo que o eixo X
 void  Plane::rotateZ(double angle)
 {
 	Eigen::Matrix4d rx;
@@ -263,8 +321,16 @@ void  Plane::rotateZ(double angle)
 }
 
 void Plane::rotateAny(double angle, Eigen::Vector3d p1, Eigen::Vector3d p2)
-{}
+{
+	// não implementado
+}
 
+
+/**
+ * Converte as coordenadas do plano para o sistema de coordenadas da câmera.
+ * 
+ * @param transformationMatrix A matriz de transformação 4x4 que representa a transformação do plano.
+ */
 void Plane::convertToCamera(Eigen::Matrix4d transformationMatrix)
 {
 	Eigen::Vector4d center4, normal4;

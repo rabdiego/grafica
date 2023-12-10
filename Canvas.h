@@ -7,11 +7,12 @@
 #ifndef Canvas_H
 #define Canvas_H
 
+
+/**
+ * Classe que representa um canvas.
+ */
 class Canvas
 {
-	/*
-	Classe do Canvas
-	*/
 public:
 	double windowDistance;
 	double windowWidth;
@@ -23,6 +24,8 @@ public:
 	double jXMin;
 	double jYMax;
 
+
+	// construtor e raycast
 	Canvas(double windowDistance, double windowWidth, double windowHeight, int numLines, int numColumns);
 	Tensor raycast(Eigen::Vector3d observable, Scene scene, bool toCamera);
 };
