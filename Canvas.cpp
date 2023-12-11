@@ -197,7 +197,7 @@ Tensor Canvas::raycast(Eigen::Vector3d observable, Scene scene, bool toCamera)
 				}
 
 				// computa a cor dos pixel e pinta o canvas
-				Eigen::Vector3d color = objects[idxMin]->computeColor(minimum, ray, scene.sources, isShadowed)
+				Eigen::Vector3d color = objects[idxMin]->computeColor(minimum, ray, scene.sources, isShadowed);
 
 				canvas.red(l, c) = color(0);
 				canvas.green(l, c) = color(1);

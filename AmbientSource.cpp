@@ -41,9 +41,9 @@ void AmbientSource::computeIntensity(Eigen::Vector3d pInt, Ray ray, Eigen::Vecto
 
 	Eigen::Vector3d intesityAmbient = *ptrIntesityAmbient;
 
-	intensityAmbient[0] += temp[0] > 0 ? temp[0] : 0;
-	intensityAmbient[1] += temp[1] > 0 ? temp[1] : 0;
-	intensityAmbient[2] += temp[2] > 0 ? temp[2] : 0;
+	intesityAmbient[0] += temp[0] > 0 ? temp[0] : 0;
+	intesityAmbient[1] += temp[1] > 0 ? temp[1] : 0;
+	intesityAmbient[2] += temp[2] > 0 ? temp[2] : 0;
 
 	*ptrIntesityAmbient = intesityAmbient;
 }

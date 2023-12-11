@@ -72,8 +72,8 @@ int main(int argc, char* argv[])
 	Scene scene;
 	Camera* camera = new Camera
 	(
-		Eigen::Vector3d(0, 0, 0),
-		Eigen::Vector3d(0, 0, -1),
+		Eigen::Vector3d(-160, 100, -100),
+		Eigen::Vector3d(0, 0, -230),
 		Eigen::Vector3d(0, 1, 0)
 	);
 	scene.setCamera(camera);
