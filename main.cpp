@@ -70,6 +70,11 @@ int main(int argc, char* argv[])
 	// Canvas e cena
 	Canvas canvas(windowDistance, windowWidth, windowHeight, numLines, numColumns);
 	Scene scene;
+	/* Criando a camera
+		position: (-160, 100, -100),
+		lookAt: (0, 0, -230),
+		viewUp: (0, 1, 0)
+	*/
 	Camera* camera = new Camera
 	(
 		Eigen::Vector3d(-160, 100, -100),
